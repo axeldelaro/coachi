@@ -284,6 +284,23 @@ if (/perdre du poids|maigrir|grossir|prendre de la masse|secher|gras|bodyfat|com
   ])
 }
 
+// EQUIPEMENT
+if (/equipement|materiel|j'ai quoi/.test(text)) {
+  return pick([
+    `Ton equipement actuel : ${equipList.length > 0 ? equipList.join(', ') : 'Aucun (poids de corps pur)'}. Tu peux modifier ca dans ton Profil a tout moment, tes seances s'adapteront automatiquement.`,
+    `Avec ${equipList.length > 0 ? 'ton materiel (' + equipList.join(', ') + ')' : 'juste ton corps'}, on a tout ce qu'il faut. Le calisthenics s'adapte a toi. Une question sur un mouvement specifique ?`,
+  ])
+}
+
+// SOMMEIL
+if (/sommeil|dormir|dormi|nuit|insomnie|fatigu. le matin/.test(text)) {
+  return pick([
+    `Le sommeil c'est 50% de la progression. Moins de 7h = hormones de croissance en chute, cortisol (stress) en hausse. Priorite absolue ce soir : ecran coupe 1h avant le lit.`,
+    `Tu n'as pas bien dormi ? Ne force pas l'intensite aujourd'hui. Fais la seance mais garde 2-3 reps sous le coude. Et ce soir, vise 8 heures pleines.`,
+    `Sommeil difficile = recup freinee. La base : meme heure de coucher, chambre fraiche (18-19C), pas d'ecrans. Si tu ne dors pas, tout le reste (nutrition, entrainement) perd en efficacite.`,
+  ])
+}
+
 // HORS SUJET / HUMOUR
 if (/meteo|temps qu'il fait|foot|foot|politique|films?|serie|musique|netflix|qu'est.ce que tu penses de/.test(text)) {
   return pick([

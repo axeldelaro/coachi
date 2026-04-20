@@ -46,9 +46,14 @@ function CookingGuide({ groceryPrefs }) {
 
   // Find all active cooking methods in use
   const activeMethods = new Set()
-  groceries.forEach((item) => {
-    const resolved = resolveIngredient(item, groceryPrefs)
-    if (resolved.cookMethod) activeMethods.add(resolved.cookMethod)
+  meals.forEach((meal) => {
+    meal.ingredients.forEach((ing) => {
+      const base = groceries.find((g) => g.id === ing.ingredientId)
+      if (base) {
+        const resolved = resolveIngredient(base, groceryPrefs)
+        if (resolved.cookMethod) activeMethods.add(resolved.cookMethod)
+      }
+    })
   })
 
   const entries = [...activeMethods].map((m) => cookingMethods[m]).filter(Boolean)

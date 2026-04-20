@@ -1,20 +1,15 @@
 import { useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import { program } from '../data/program'
+import { program, calcReps } from '../data/program'
 import ActiveSession from '../components/workout/ActiveSession'
-import { Play, Moon, ChevronRight, AlertCircle } from 'lucide-react'
-
-function calcRep(ex, profile, repMult) {
-  if (ex.fixedReps) return ex.fixedReps
-  if (!ex.maxKey) return 10
-  const max = profile?.[ex.maxKey] ?? 10
-  return Math.max(1, Math.round(max * ex.intensityPct * repMult))
-}
+import ExerciseModal from '../components/workout/ExerciseModal'
+import { Play, Moon, AlertCircle } from 'lucide-react'
 
 export default function WorkoutPage() {
   const { data } = useOutletContext()
   const [selectedDay, setSelectedDay] = useState(new Date().getDay() === 0 ? 6 : new Date().getDay() - 1)
   const [sessionActive, setSessionActive] = useState(false)
+  const [selectedExercise, setSelectedExercise] = useState(null)
 
   if (!data) return null
 
@@ -40,6 +35,14 @@ export default function WorkoutPage() {
           profile={profile}
           repMultiplier={repMult}
           onClose={() => setSessionActive(false)}
+        />
+      )}
+
+      {selectedExercise && (
+        <ExerciseModal
+          exercise={selectedExercise}
+          equip={equip}
+          onClose={() => setSelectedExercise(null)}
         />
       )}
 
@@ -95,9 +98,15 @@ export default function WorkoutPage() {
             {/* Exercise list */}
             <div className="flex flex-col gap-3">
               {resolvedExercises.map((ex, i) => {
-                const reps = calcRep(ex, profile, repMult)
+                const reps = calcReps(ex, profile)
+                const finalReps = Math.max(1, Math.round(reps * repMult))
                 return (
-                  <div key={ex.id} className="glass rounded-2xl p-4 fade-up" style={{ animationDelay: `${0.12 + i * 0.04}s` }}>
+                  <button 
+                    key={ex.id} 
+                    onClick={() => setSelectedExercise(ex)}
+                    className="glass rounded-2xl p-4 fade-up text-left tap-scale transition-all w-full relative" 
+                    style={{ animationDelay: `${0.12 + i * 0.04}s` }}
+                  >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
@@ -106,20 +115,23 @@ export default function WorkoutPage() {
                             <span className="text-[9px] px-1.5 py-0.5 rounded bg-yellow-500/15 text-yellow-400 font-medium">Substitué</span>
                           )}
                         </div>
-                        <p className="text-sm font-bold text-white">{ex.name}</p>
+                        <p className="text-sm font-bold text-white pr-4">{ex.name}</p>
                         <p className="text-xs text-white/40 mt-1">
-                          {ex.sets} × {reps}{ex.isTime ? 's' : ' reps'} · {Math.round(ex.intensityPct * 100)}% intensité
+                          {ex.sets} × {finalReps}{ex.isTime ? 's' : ' reps'} · {Math.round(ex.intensityPct * 100)}% intensité
                         </p>
-                        {ex.cues?.length > 0 && (
-                          <p className="text-xs text-white/25 mt-1 italic">{ex.cues[0]}</p>
+                        {ex.target && (
+                          <p className="text-[11px] text-white/25 mt-1.5 italic line-clamp-1">{ex.target}</p>
                         )}
                       </div>
                       <div className="text-right shrink-0">
-                        <span className="text-xl font-black accent-text">{reps}</span>
+                        <span className="text-xl font-black accent-text">{finalReps}</span>
                         <p className="text-[9px] text-white/30">{ex.isTime ? 'sec' : 'reps'}</p>
                       </div>
                     </div>
-                  </div>
+                    <div className="absolute top-1/2 -translate-y-1/2 right-3 opacity-30">
+                      <AlertCircle size={14} className="text-white" />
+                    </div>
+                  </button>
                 )
               })}
             </div>
