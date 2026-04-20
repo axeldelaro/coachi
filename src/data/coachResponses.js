@@ -363,6 +363,42 @@ if (/manque de force pure/.test(text)) {
   ])
 }
 
+// TECHNIQUE - NIVEAU 2 (Dips)
+if (/les dips.*probleme|dips posent probleme/.test(text)) {
+  return pick([
+    `Pour les dips : tu ressens une douleur aux epaules (ou sternum), ou tu stagnes au niveau du nombre de reps ?`,
+  ])
+}
+// TECHNIQUE - NIVEAU 3 (Dips)
+if (/douleur aux epaules|douleur au sternum/.test(text)) {
+  return pick([
+    `Douleur sternum = manque de mobilite ou descente trop basse. Ne descends pas plus bas que 90 degres au niveau du coude. Travaille ta souplesse thoracique.`,
+  ])
+}
+if (/stagne au niveau des reps|stagne en reps/.test(text)) {
+  return pick([
+    `Pour debloquer tes dips, fais des pauses de 2 secondes en position basse. Ca va construire une force enorme au point critique du mouvement.`,
+  ])
+}
+
+// TECHNIQUE - NIVEAU 2 (Core/Abdos)
+if (/le core.*probleme|abdos posent probleme/.test(text)) {
+  return pick([
+    `Pour les abdos : tu as mal au bas du dos quand tu les travailles, ou tu n'arrives pas a tenir les exercices de gainage (L-Sit, etc) ?`,
+  ])
+}
+// TECHNIQUE - NIVEAU 3 (Core)
+if (/mal au bas du dos/.test(text)) {
+  return pick([
+    `Mal au bas du dos = tu creuses. Rentre le ventre et plaque ton bassin en retroversion (posterior pelvic tilt). Si ca fait mal, passe sur du gainage sur les genoux pour reapprendre.`,
+  ])
+}
+if (/pas a tenir le gainage/.test(text)) {
+  return pick([
+    `Le gainage (surtout L-sit) demande aussi de la force dans les hanches et triceps. Fais des levees de genoux suspendus a la barre pour progresser.`,
+  ])
+}
+
 // CARDIO & SOUPLESSE - NIVEAU 1
 if (/cardio ou souplesse/.test(text)) {
   return pick([

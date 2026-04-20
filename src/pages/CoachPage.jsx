@@ -221,6 +221,8 @@ export default function CoachPage() {
                 currentReplies = [
                   { label: '🔥 Tractions', text: 'les tractions posent probleme' },
                   { label: '🏋️ Pompes', text: 'les pompes posent probleme' },
+                  { label: '💪 Dips', text: 'les dips posent probleme' },
+                  { label: '🧱 Abdos (Core)', text: 'le core pose probleme' },
                 ]
               } else if (txt.includes('ton dos, tes biceps, ou ton grip')) {
                 currentReplies = [
@@ -232,6 +234,16 @@ export default function CoachPage() {
                 currentReplies = [
                   { label: '⚡ Douleur Poignets', text: 'douleur aux poignets' },
                   { label: '📉 Manque Force', text: 'manque de force pure' },
+                ]
+              } else if (txt.includes('douleur aux epaules (ou sternum), ou tu stagnes')) {
+                currentReplies = [
+                  { label: '⚡ Douleur (Épaules/Sternum)', text: 'douleur aux epaules' },
+                  { label: '📉 Stagnation Reps', text: 'stagne au niveau des reps' },
+                ]
+              } else if (txt.includes('mal au bas du dos quand tu les travailles, ou tu n\'arrives pas a tenir')) {
+                currentReplies = [
+                  { label: '⚡ Douleur Bas du Dos', text: 'mal au bas du dos' },
+                  { label: '📉 Gainage Trop Dur', text: 'pas a tenir le gainage' },
                 ]
               } else if (txt.includes('ton endurance (cardio) ou de ta mobilite (souplesse)')) {
                 currentReplies = [
