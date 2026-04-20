@@ -7,8 +7,8 @@ export default function Header({ data }) {
   return (
     <header className="flex items-center justify-between px-5 py-3 glass border-b border-white/5 shrink-0">
       <div>
-        <p className="text-[10px] uppercase tracking-[0.2em] text-white/30 font-medium">Protocol</p>
-        <h1 className="text-[17px] font-bold tracking-tight leading-tight text-white">Écorché</h1>
+        <p className="text-[10px] uppercase tracking-[0.2em] text-white/30 font-medium">Mon</p>
+        <h1 className="text-[17px] font-bold tracking-tight leading-tight text-white">Coach Interactif</h1>
       </div>
 
       <div className="flex items-center gap-2">

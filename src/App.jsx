@@ -8,6 +8,7 @@ import GroceryPage from './pages/GroceryPage'
 import DietPage from './pages/DietPage'
 import WorkoutPage from './pages/WorkoutPage'
 import ProfilePage from './pages/ProfilePage'
+import CoachPage from './pages/CoachPage'
 
 function AuthGuard({ children }) {
   const { user, loading } = useAuth()
@@ -37,6 +38,7 @@ export default function App() {
             <Route path="grocery"   element={<GroceryPage />} />
             <Route path="diet"      element={<DietPage />} />
             <Route path="workout"   element={<WorkoutPage />} />
+            <Route path="coach"     element={<CoachPage />} />
             <Route path="profile"   element={<ProfilePage />} />
           </Route>
           <Route path="*" element={<Navigate to="/dashboard" replace />} />

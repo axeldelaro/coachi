@@ -41,7 +41,7 @@ export default function GroceryPage() {
   }
 
   return (
-    <div className="px-4 py-5 pb-6 flex flex-col gap-4">
+    <div className="px-4 py-5 pb-28 flex flex-col gap-4">
       <div className="fade-up">
         <h2 className="text-xl font-black text-white">Liste de Courses</h2>
         <p className="text-xs text-white/30 mt-0.5">

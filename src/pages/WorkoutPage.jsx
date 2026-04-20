@@ -43,7 +43,7 @@ export default function WorkoutPage() {
         />
       )}
 
-      <div className="px-4 py-5 pb-6 flex flex-col gap-5">
+      <div className="px-4 py-5 pb-28 flex flex-col gap-5">
         <div className="fade-up">
           <h2 className="text-xl font-black text-white">Programme</h2>
           <p className="text-xs text-white/30 mt-0.5">IA reps ×{repMult.toFixed(2)}</p>

@@ -62,7 +62,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="px-4 py-5 flex flex-col gap-5 pb-6">
+    <div className="px-4 py-5 flex flex-col gap-5 pb-28">
       {/* Greeting */}
       <div className="fade-up">
         <p className="text-xs text-white/30 uppercase tracking-widest font-medium">Bonjour,</p>

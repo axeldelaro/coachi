@@ -71,7 +71,7 @@ export default function AuthPage() {
           <Zap size={28} className="text-white" fill="white" />
         </div>
         <div className="text-center">
-          <h1 className="text-2xl font-black tracking-tight text-white">Protocol Écorché</h1>
+          <h1 className="text-2xl font-black tracking-tight text-white">Coach Interactif</h1>
           <p className="text-xs text-white/30 mt-0.5 tracking-widest uppercase">Discipline. Résultats.</p>
         </div>
       </div>

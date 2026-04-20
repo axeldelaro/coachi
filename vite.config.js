@@ -10,9 +10,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/icon-192.svg', 'icons/icon-512.svg'],
       manifest: {
-        name: 'Protocol Écorché',
-        short_name: 'Écorché',
-        description: 'Protocole de coaching fitness et nutrition ultra-strict',
+        name: 'Coach Interactif',
+        short_name: 'Coach',
+        description: 'Coaching fitness et nutrition personnalisé par IA',
         theme_color: '#050505',
         background_color: '#050505',
         display: 'standalone',
