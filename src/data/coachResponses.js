@@ -142,32 +142,32 @@ export function getCoachResponse(input, profile, iaState, logs) {
   // HYDRATATION
   if (/eau|hydrat|boire|soif|litre|deshydrat/.test(text)) {
     return pick([
-      `A ${ weight }kg : minimum ${ waterTarget }L / jour.En seance : +500 - 700ml.Simple : 1 verre au lever, 1 avant chaque repas, 1 pendant seance, 1 apres.${ water> 0 ? `Tu as log ${water} verre${water > 1 ? 's' : ''} aujourd'hui — continue.` : 'Combien t\'as bu aujourd\'hui ?'} `,
-      `Deshydratation a 2 % = -10 a - 20 % de performance.C'est enorme. Et beaucoup de "fatigue" ou "manque de concentration" c'est juste ca.${ water < 4 ? 'Tu dois boire plus.' : 'Bonne hydratation.' } `,
-      `${ waterTarget }L minimum pour ${ weight } kg.Si tu transpires beaucoup en seance, monte a ${ Math.round((waterTarget + 0.7) * 10) / 10 } L.Café et the comptent a moitie.Evite les sodas.`,
-      `L'eau c'est gratuit et ca change tout: recuperation, concentration, performance.Log ta conso dans le dashboard pour le tracker.Objectif : ${ waterTarget }L avant 18h.`,
+      `A ${weight}kg : minimum ${waterTarget}L/jour. En seance : +500-700ml. Simple : 1 verre au lever, 1 avant chaque repas, 1 pendant seance, 1 apres. ${water > 0 ? `Tu as log ${water} verre${water > 1 ? 's' : ''} aujourd'hui — continue.` : 'Combien t\'as bu aujourd\'hui ?'}`,
+      `Deshydratation a 2% = -10 a -20% de performance. C'est enorme. Et beaucoup de "fatigue" ou "manque de concentration" c'est juste ca. ${water < 4 ? 'Tu dois boire plus.' : 'Bonne hydratation.'}`,
+      `${waterTarget}L minimum pour ${weight}kg. Si tu transpires beaucoup en seance, monte a ${Math.round((waterTarget + 0.7) * 10) / 10}L. Café et the comptent a moitie. Evite les sodas.`,
+      `L'eau c'est gratuit et ca change tout : recuperation, concentration, performance. Log ta conso dans le dashboard pour le tracker. Objectif : ${waterTarget}L avant 18h.`,
     ])
   }
 
   // STREAK
   if (/streak|serie|consecutif|constanc|regularit|jours d'affilee|jours de suite/.test(text)) {
     if (streak === 0) return pick([
-      `Streak a 0 — ca arrive.La question c'est pas le passe, c'est maintenant: fais ton bilan ce soir dans le dashboard.Un geste suffit a relancer.`,
-      `Zero streak.OK.C'est pas une condamnation, c'est un point de depart.Ce soir: bilan du soir dans le dashboard.${ day === 'lundi' ? 'Et c\'est lundi — parfait pour reprendre.' : 'Aujourd\'hui est le bon moment.' } `,
-      `0 jour.Pas de jugement.Ca se relance avec une seule action.Petit, concret, ce soir.Un bilan de 2 minutes et le compteur repart.`,
+      `Streak a 0 — ca arrive. La question c'est pas le passe, c'est maintenant : fais ton bilan ce soir dans le dashboard. Un geste suffit a relancer.`,
+      `Zero streak. OK. C'est pas une condamnation, c'est un point de depart. Ce soir : bilan du soir dans le dashboard. ${day === 'lundi' ? 'Et c\'est lundi — parfait pour reprendre.' : 'Aujourd\'hui est le bon moment.'}`,
+      `0 jour. Pas de jugement. Ca se relance avec une seule action. Petit, concret, ce soir. Un bilan de 2 minutes et le compteur repart.`,
     ])
     if (streak < 5) return pick([
-      `${ streak } jour${ streak > 1 ? 's' : '' } de suite — bien! La premiere semaine c'est la plus difficile. Tiens jusqu'a 7 et le cerveau commence a reconnaitre l'habitude.`,
-    `Quelques jours, c'est un debut. A ce stade beaucoup lachent. Toi t'es encore la. ${streak} -> vise 7 -> vise 14 -> vise 30. Un palier a la fois.`,
+      `${streak} jour${streak > 1 ? 's' : ''} de suite — bien ! La premiere semaine c'est la plus difficile. Tiens jusqu'a 7 et le cerveau commence a reconnaitre l'habitude.`,
+      `Quelques jours, c'est un debut. A ce stade beaucoup lachent.`,
     ])
-  if (streak < 14) return pick([
-    `${streak} jours — zone de construction d'habitude. Les neurosciences disent 21 jours pour ancrer une habitude. T'es dans la bonne trajectoire.`,
-    `${streak}j de streak ! On commence a voir quelque chose de serieux. Autour de 2 semaines, les gens qui continuent developpent une vraie identite athletique.`,
-  ])
-  if (streak < 30) return pick([
-    `${streak} jours. Pas commun du tout ${name}. La plupart abandonnent avant 2 semaines. Toi tu construis quelque chose de reel et durable.`,
-    `Franchement impressionnant. ${streak} jours — l'habitude est ancree. Maintenant c'est une question d'identite, pas d'effort.`,
-  ])
+    if (streak < 14) return pick([
+      `${streak} jours — zone de construction d'habitude. Les neurosciences disent 21 jours pour ancrer une habitude. T'es dans la bonne trajectoire.`,
+      `${streak}j de streak ! On commence a voir quelque chose de serieux. Autour de 2 semaines, les gens qui continuent developpent une vraie identite athletique.`,
+    ])
+    if (streak < 30) return pick([
+      `${streak} jours. Pas commun du tout ${name}. La plupart abandonnent avant 2 semaines. Toi tu construis quelque chose de reel et durable.`,
+      `Franchement impressionnant. ${streak} jours — l'habitude est ancree. Maintenant c'est une question d'identite, pas d'effort.`,
+    ])
     return pick([
       `${streak} jours sans interruption. Niveau pro ${name}. La discipline est devenue qui tu es. Continue.`,
       `${streak}j. Je n'ai rien a dire a part : respect. La majorite des gens ne depassent pas 7 jours. Toi tu en es a ${streak}.`,
@@ -175,11 +175,10 @@ export function getCoachResponse(input, profile, iaState, logs) {
     ])
   }
 
-
-// TRACTIONS
-if (/traction|pull.?up|chin.?up|tirage|barre de traction|tirer/.test(text)) {
-  return pick([
-    `${maxPull} tractions max (${pullLevel}). ${maxPull < 5 ? 'Focus : retractions scapulaires, dead hangs, negatifs 5s. La force vient.' : maxPull < 10 ? 'Ajoute les variantes : large, neutre, supination. Plus de volume.' : maxPull < 18 ? 'Archer pull-ups, L-sit pull-ups, typewriter — tes prochaines cibles.' : 'Muscle-up, one-arm progressions — le prochain niveau t\'attend.'}
+  // TRACTIONS
+  if (/traction|pull.?up|chin.?up|tirage|barre de traction|tirer/.test(text)) {
+    return pick([
+      `${maxPull} tractions max (${pullLevel}). ${maxPull < 5 ? 'Focus : retractions scapulaires, dead hangs, negatifs 5s. La force vient.' : maxPull < 10 ? 'Ajoute les variantes : large, neutre, supination. Plus de volume.' : maxPull < 18 ? 'Archer pull-ups, L-sit pull-ups, typewriter — tes prochaines cibles.' : 'Muscle-up, one-arm progressions — le prochain niveau t\'attend.'}
 Update ton max dans le Profil apres chaque test.`,
     `Pour progresser en tractions : Greasing the Groove (GtG). Faire quelques reps propres plusieurs fois dans la journee sans aller a l'echec. Ca marche vraiment. Essaie avec ta barre.`,
     `Les tractions c'est le roi. A ${maxPull} reps tu es ${maxPull < 5 ? 'en phase de construction — tout est normal' : maxPull < 12 ? 'intermediaire — variation et volume vont faire progresser vite' : 'a un niveau qui impressionne la plupart des gens'}. Question precise sur les tractions ?`,
