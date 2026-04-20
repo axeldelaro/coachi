@@ -50,7 +50,7 @@ export default function WorkoutPage() {
         </div>
 
         {/* Day carousel */}
-        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1 fade-up" style={{ animationDelay: '0.05s' }}>
+        <div className="flex gap-2 overflow-x-auto pb-1 fade-up" style={{ animationDelay: '0.05s', scrollbarWidth: 'none' }}>
           {program.map((d, i) => {
             const isSelected = i === selectedDay
             return (
