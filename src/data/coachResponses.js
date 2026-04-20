@@ -191,25 +191,71 @@ export function getCoachResponse(input, profile, iaState, logs) {
     ])
   }
 
-  // REPOS / DOULEURS
+  // REPOS / DOULEURS - NIVEAU 1
   if (/repos|fatigue|recup|douleur|courbature|mal aux|blessure|trop fatigue|j'ai mal/.test(text)) {
     return pick([
-      `Le repos c'est la ou tu PROGRESSES. Pendant l'effort tu stresses les fibres. C'est le sommeil et les jours off qui les reconstruisent plus fortes. Skip les jours de repos = resultats divises par 2.`,
-      `Courbatures ? Bonne nouvelle — fibres musculaires sollicitees. Mais distingue DOMS (courbatures musculaires normales) vs douleur articulaire (stop absolu). Lequel des deux ?`,
-      `Si t'es vraiment epuise, la seance peut attendre 24h. Pas d'arret definitif — juste du bon sens. Ta progression sur 6 mois compte plus qu'une seance isolee.`,
-      `Recuperation active recommandee : marche 20-30 min, mobilite articulaire, etirements doux. PAS d'intensite. Un vrai jour de repos c'est actif, pas affale sur le canape.`,
-      `J'entends. Le corps parle — faut l'ecouter. ${streak > 10 ? `Avec ${streak} jours de streak, tu merites peut-etre un vrai jour off.` : 'Reste dans le programme mais module l\'intensite.'} Ou t\'as mal exactement ?`,
-      `Douleur aigue ou diffuse ? Aigue = stop cet exercice, consulte.Diffuse / courbatures = OK pour mouvement legers.La difference est importante.`,
+      `Le repos c'est la ou tu PROGRESSES. Tu ressens des courbatures musculaires classiques (DOMS), ou une douleur precises a un endroit (articulation, tendon) ?`,
     ])
-    }
+  }
+  // RECUP - NIVEAU 2
+  if (/courbatures classiques|courbatures musculaires|c'est des courbatures/.test(text)) {
+    return pick([
+      `Courbatures = signe que le muscle a ete sollicite. C'est normal. Tu peux t'entrainer quand meme : marche, mobilite, ou seance legere. Ou est-ce que ca te gene le plus ? Haut du corps ou bas du corps ?`,
+    ])
+  }
+  if (/douleur articulaire|douleur precise|douleur au tendon/.test(text)) {
+    return pick([
+      `Douleur articulaire ou tendineuse = STOP cet exercice. C'est ou exactement ? Epaule, coude, poignet, genou ?`,
+    ])
+  }
+  // RECUP - NIVEAU 3 (courbatures)
+  if (/courbatures haut du corps/.test(text)) {
+    return pick([
+      `Haut du corps : fais un circuit mobilite epaules + suspensions passives (dead hang 30s). Evite les mouvements lourds. Etirements doux pectoraux et dorsaux 30s chacun. Demain ca ira mieux.`,
+    ])
+  }
+  if (/courbatures bas du corps/.test(text)) {
+    return pick([
+      `Bas du corps : marche 20 min + squats a vide tres lents (10 reps). Foam roller sur les quadriceps et ischio-jambiers. Bain chaud si possible. Hydrate toi bien.`,
+    ])
+  }
+  // RECUP - NIVEAU 3 (douleur articulaire zones)
+  if (/douleur a l'epaule|douleur epaule/.test(text)) {
+    return pick([
+      `Epaule : la coiffe des rotateurs est fragile. Arrete les dips et les pompes declinees. Fais des rotations externes avec elastique (20 reps legeres) tous les jours. Si ca persiste 2 semaines, consulte.`,
+    ])
+  }
+  if (/douleur au coude/.test(text)) {
+    return pick([
+      `Coude = probablement epicondylite (tennis elbow). Reduis le volume de tractions et de chin-ups. Etire les extenseurs de poignet 3x30s. Glace apres la seance.`,
+    ])
+  }
+  if (/douleur au poignet/.test(text)) {
+    return pick([
+      `Poignet : utilise des parallettes pour les pompes, ca aligne le poignet. Fais des cercles de poignet en echauffement (20 dans chaque sens). Evite la flexion maximale en charge.`,
+    ])
+  }
+  if (/douleur au genou/.test(text)) {
+    return pick([
+      `Genou : renforce les quadriceps (squats muraux, extensions assises). Evite les lunges profonds tant que ca dure. Si douleur derriere le genou = ischio, si devant = rotulien. Consulte si ca dure.`,
+    ])
+  }
 
-  // HYDRATATION
+  // HYDRATATION - NIVEAU 1
   if (/eau|hydrat|boire|soif|litre|deshydrat/.test(text)) {
     return pick([
-      `A ${weight}kg : minimum ${waterTarget}L/jour. En seance : +500-700ml. Simple : 1 verre au lever, 1 avant chaque repas, 1 pendant seance, 1 apres. ${water > 0 ? `Tu as log ${water} verre${water > 1 ? 's' : ''} aujourd'hui — continue.` : 'Combien t\'as bu aujourd\'hui ?'}`,
-      `Deshydratation a 2% = -10 a -20% de performance. C'est enorme. Et beaucoup de "fatigue" ou "manque de concentration" c'est juste ca. ${water < 4 ? 'Tu dois boire plus.' : 'Bonne hydratation.'}`,
-      `${waterTarget}L minimum pour ${weight}kg. Si tu transpires beaucoup en seance, monte a ${Math.round((waterTarget + 0.7) * 10) / 10}L. Café et the comptent a moitie. Evite les sodas.`,
-      `L'eau c'est gratuit et ca change tout : recuperation, concentration, performance. Log ta conso dans le dashboard pour le tracker. Objectif : ${waterTarget}L avant 18h.`,
+      `A ${weight}kg : minimum ${waterTarget}L/jour. Tu bois surtout de l'eau plate, ou tu utilises aussi des boissons sport / the / cafe ?`,
+    ])
+  }
+  // HYDRATATION - NIVEAU 2
+  if (/eau plate|surtout de l'eau/.test(text)) {
+    return pick([
+      `Parfait, l'eau plate c'est le meilleur choix. Astuce : 1 verre au lever, 1 avant chaque repas, 1 pendant la seance, 1 apres. Ca fait deja ${waterTarget}L sans effort. Tu le fais ?`,
+    ])
+  }
+  if (/boissons sport|the|cafe|café/.test(text)) {
+    return pick([
+      `Cafe/the comptent a moitie dans l'hydratation (effet diuretique). Les boissons sport = utiles seulement si seance > 1h. Pour toi, l'eau suffit. Evite les sodas, meme light.`,
     ])
   }
 
@@ -382,7 +428,7 @@ if (/stagne au niveau des reps|stagne en reps/.test(text)) {
 }
 
 // TECHNIQUE - NIVEAU 2 (Core/Abdos)
-if (/le core.*probleme|abdos posent probleme/.test(text)) {
+if (/le core pose probleme|abdos posent probleme|core.*probleme/.test(text)) {
   return pick([
     `Pour les abdos : tu as mal au bas du dos quand tu les travailles, ou tu n'arrives pas a tenir les exercices de gainage (L-Sit, etc) ?`,
   ])
@@ -446,12 +492,36 @@ if (/whey|creatine|supplement|complement|proteine en poudre|bcaa|pre.workout|vit
   ])
 }
 
-// PLATEAU
+// PLATEAU - NIVEAU 1
 if (/plateau|bloque|plus de progr|stagne|stagnation|progresse plus/.test(text)) {
   return pick([
-    `Plateau ? Normal et previsible. Solutions : 1) Change la variante de l'exercice 2) Joue avec le tempo (lent/explosif) 3) Augmente le volume progressivement 4) Regarde le sommeil et la nutrition — souvent le vrai coupable.`,
-    `Les plateaux sont une info — pas un echec. Ton corps s'est adapte a ce stimulus. Il faut un nouveau stress. Change quelque chose : variante, rep range, frequence, ou intensite.`,
-    `Sur quel exercice exactement tu stagnes ? Les tractions ? Les pompes ? Un plateau sur traction a ${maxPull} reps peut se debloquer avec du volume lower rep et des variantes comme les negatifs.`,
+    `Plateau. Ca arrive a tout le monde. Depuis combien de temps tu stagnes ? Moins de 2 semaines ou plus de 2 semaines ?`,
+  ])
+}
+// PLATEAU - NIVEAU 2
+if (/moins de 2 semaines/.test(text)) {
+  return pick([
+    `Moins de 2 semaines c'est normal — ca peut etre la fatigue accumulee. Continue ton programme, dors bien, mange suffisamment. Si ca persiste apres 3 semaines, on changera la strategie.`,
+  ])
+}
+if (/plus de 2 semaines/.test(text)) {
+  return pick([
+    `Plus de 2 semaines = le corps s'est adapte. 3 strategies : 1) Varier les exercices (prise differente) 2) Changer le tempo (negatifs lents) 3) Augmenter le volume total. Sur quel exercice tu stagnes ? Tractions, pompes, ou dips ?`,
+  ])
+}
+if (/stagne tractions/.test(text)) {
+  return pick([
+    `Tractions en plateau a ${maxPull} reps. Essaie : 1 semaine de negatifs lents (5s descente), puis reteste ton max. Souvent +1-2 reps direct.`,
+  ])
+}
+if (/stagne pompes/.test(text)) {
+  return pick([
+    `Pompes en plateau a ${maxPush} reps. Change d'angle : pieds sureleves, diamant, ou tempo 4s descente. Quand tu reviens aux pompes classiques, ton max aura monte.`,
+  ])
+}
+if (/stagne dips/.test(text)) {
+  return pick([
+    `Dips en plateau a ${maxDips} reps. ${equip.vest ? 'Tu as le gilet leste : fais des series a 60% de ton max avec le gilet, puis reteste sans.' : 'Fais des pauses en position basse (2-3s) pour construire la force au point faible.'}`,
   ])
 }
 
@@ -569,20 +639,45 @@ if (/perdre du poids|maigrir|grossir|prendre de la masse|secher|gras|bodyfat|com
   ])
 }
 
-// EQUIPEMENT
+// EQUIPEMENT - NIVEAU 1
 if (/equipement|materiel|j'ai quoi/.test(text)) {
   return pick([
-    `Ton equipement actuel : ${equipList.length > 0 ? equipList.join(', ') : 'Aucun (poids de corps pur)'}. Tu peux modifier ca dans ton Profil a tout moment, tes seances s'adapteront automatiquement.`,
-    `Avec ${equipList.length > 0 ? 'ton materiel (' + equipList.join(', ') + ')' : 'juste ton corps'}, on a tout ce qu'il faut. Le calisthenics s'adapte a toi. Une question sur un mouvement specifique ?`,
+    `Ton equipement : ${equipList.length > 0 ? equipList.join(', ') : 'Aucun (poids de corps pur)'}. Tu veux que je te dise quoi acheter en priorite, ou tu veux savoir comment optimiser ce que tu as deja ?`,
+  ])
+}
+// EQUIPEMENT - NIVEAU 2
+if (/quoi acheter en priorite/.test(text)) {
+  return pick([
+    `Le meilleur investissement en calisthenics : 1) Barre de traction (fixation porte = 25-40 euros). 2) Anneaux de gym (~30 euros). 3) Elastiques d'assistance (~20 euros). Ces 3 debloquent 90% des exercices.`,
+  ])
+}
+if (/optimiser ce que j'ai/.test(text)) {
+  return pick([
+    `Avec ${equipList.length > 0 ? equipList.join(', ') : 'ton corps'}, tu peux faire enormement. Chaque equipement debloque des variantes : ${equip.pullupBar ? 'barre = tractions, leg raises, dead hangs. ' : ''}${equip.rings ? 'Anneaux = ring dips, ring rows, face pulls. ' : ''}${equip.band ? 'Elastiques = assistance tractions, mobilite. ' : ''}Tu veux des details sur un mouvement specifique ?`,
   ])
 }
 
-// SOMMEIL
+// SOMMEIL - NIVEAU 1
 if (/sommeil|dormir|dormi|nuit|insomnie|fatigu. le matin/.test(text)) {
   return pick([
-    `Le sommeil c'est 50% de la progression. Moins de 7h = hormones de croissance en chute, cortisol (stress) en hausse. Priorite absolue ce soir : ecran coupe 1h avant le lit.`,
-    `Tu n'as pas bien dormi ? Ne force pas l'intensite aujourd'hui. Fais la seance mais garde 2-3 reps sous le coude. Et ce soir, vise 8 heures pleines.`,
-    `Sommeil difficile = recup freinee. La base : meme heure de coucher, chambre fraiche (18-19C), pas d'ecrans. Si tu ne dors pas, tout le reste (nutrition, entrainement) perd en efficacite.`,
+    `Le sommeil c'est 50% de la progression. Tu as du mal a t'endormir, ou tu te reveilles pendant la nuit ?`,
+  ])
+}
+// SOMMEIL - NIVEAU 2
+if (/mal a m'endormir|du mal a m'endormir/.test(text)) {
+  return pick([
+    `Difficulte d'endormissement = trop de stimulation avant le lit. Solution : ecran coupe 1h avant, 200mg magnesium glycinate, respiration 4-7-8 (inspire 4s, bloque 7s, expire 8s). Quelle heure tu te couches ?`,
+  ])
+}
+if (/reveille pendant la nuit|je me reveille/.test(text)) {
+  return pick([
+    `Reveils nocturnes = souvent le stress ou la glycemie qui chute. Essaie : une petite collation avant le lit (fromage blanc + amandes), chambre a 18C, et pas d'alcool. L'alcool fait croire qu'on dort mieux mais detruit le sommeil profond.`,
+  ])
+}
+// SOMMEIL - NIVEAU 3
+if (/je me couche (a|à|vers) /.test(text) || /quelle heure/.test(text)) {
+  return pick([
+    `L'ideal c'est entre 22h et 23h pour avoir 7h30-8h de sommeil. La regularite est plus importante que l'heure exacte : le meme horaire tous les jours (meme le week-end) recalibre ton horloge interne.`,
   ])
 }
 

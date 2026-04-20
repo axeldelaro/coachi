@@ -150,7 +150,7 @@ export default function CoachPage() {
                   { label: '🍽️ Dîner', text: 'Idée de repas pour le dîner' },
                   { label: '↩️ Retour', text: 'Merci, c\'est tout' },
                 ]
-              } else if (txt.includes('qu\'est-ce qui te bloque ?') || txt.includes('stagnation')) {
+              } else if (txt.includes('qu\'est-ce qui te bloque ?')) {
                 currentReplies = [
                   { label: '🥱 Trop fatigué', text: 'Je suis trop fatigué' },
                   { label: '📉 Plus de progrès', text: 'Je ne progresse plus' },
@@ -162,7 +162,7 @@ export default function CoachPage() {
                   { label: '👌 Parfaite', text: 'C\'était une séance parfaite' },
                   { label: '🥵 Épuisante', text: 'C\'était épuisante' },
                 ]
-              } else if (txt.includes('perdre du gras') || txt.includes('objectif principal aujourd\'hui')) {
+              } else if (txt.includes('perdre du gras') && txt.includes('objectif principal')) {
                 currentReplies = [
                   { label: '🔥 Sèche', text: 'Je veux faire une seche' },
                   { label: '💪 Prise de Masse', text: 'Je veux faire une prise de masse' },
@@ -178,7 +178,7 @@ export default function CoachPage() {
                   { label: '⚡ 15 min', text: 'J\'ai 15 min' },
                   { label: '⏱️ 30 min', text: 'J\'ai 30 min' },
                 ]
-              // --- NOUVEAUX ARBRES PROFONDS ---
+              // --- NUTRITION PROFONDE ---
               } else if (txt.includes('proteines, de tes glucides, ou de tes graisses')) {
                 currentReplies = [
                   { label: '🥩 Protéines', text: 'mes proteines' },
@@ -206,17 +206,19 @@ export default function CoachPage() {
                   { label: '✅ Oui', text: 'oui pour les graisses' },
                   { label: '❌ Non', text: 'non pour les graisses' },
                 ]
+              // --- MINDSET ---
               } else if (txt.includes('la fatigue du travail, les distractions, ou le manque de resultats')) {
                 currentReplies = [
                   { label: '💼 Fatigue Travail', text: 'la fatigue du travail' },
                   { label: '📱 Distractions', text: 'les distractions' },
                   { label: '📉 Manque Résultats', text: 'le manque de resultats' },
                 ]
-              } else if (txt.includes('fatigue physique reelle') || txt.includes('fatigue mentale')) {
+              } else if (txt.includes('fatigue physique reelle') && txt.includes('fatigue mentale')) {
                 currentReplies = [
                   { label: '🛌 Physique', text: 'fatigue physique reelle' },
                   { label: '🤯 Mentale', text: 'fatigue mentale' },
                 ]
+              // --- TECHNIQUE ---
               } else if (txt.includes('les tractions, les pompes, les dips, ou le core (abdos)')) {
                 currentReplies = [
                   { label: '🔥 Tractions', text: 'les tractions posent probleme' },
@@ -245,6 +247,7 @@ export default function CoachPage() {
                   { label: '⚡ Douleur Bas du Dos', text: 'mal au bas du dos' },
                   { label: '📉 Gainage Trop Dur', text: 'pas a tenir le gainage' },
                 ]
+              // --- CARDIO & SOUPLESSE ---
               } else if (txt.includes('ton endurance (cardio) ou de ta mobilite (souplesse)')) {
                 currentReplies = [
                   { label: '🏃 Cardio', text: 'mon endurance cardio' },
@@ -259,6 +262,59 @@ export default function CoachPage() {
                 currentReplies = [
                   { label: '🦵 Bas du Corps', text: 'bas du corps bloque' },
                   { label: '🦍 Haut du Corps', text: 'haut du corps bloque' },
+                ]
+              // --- RECUPERATION ---
+              } else if (txt.includes('courbatures musculaires classiques (doms), ou une douleur precises')) {
+                currentReplies = [
+                  { label: '💪 Courbatures', text: 'c\'est des courbatures' },
+                  { label: '⚡ Douleur Précise', text: 'douleur articulaire' },
+                ]
+              } else if (txt.includes('ca te gene le plus ? haut du corps ou bas du corps')) {
+                currentReplies = [
+                  { label: '🦍 Haut du Corps', text: 'courbatures haut du corps' },
+                  { label: '🦵 Bas du Corps', text: 'courbatures bas du corps' },
+                ]
+              } else if (txt.includes('epaule, coude, poignet, genou')) {
+                currentReplies = [
+                  { label: '🦴 Épaule', text: 'douleur a l\'epaule' },
+                  { label: '💪 Coude', text: 'douleur au coude' },
+                  { label: '✊ Poignet', text: 'douleur au poignet' },
+                  { label: '🦵 Genou', text: 'douleur au genou' },
+                ]
+              // --- HYDRATATION ---
+              } else if (txt.includes('eau plate, ou tu utilises aussi des boissons sport')) {
+                currentReplies = [
+                  { label: '💧 Eau plate', text: 'surtout de l\'eau plate' },
+                  { label: '☕ Thé/Café aussi', text: 'du the et du cafe aussi' },
+                ]
+              // --- SOMMEIL ---
+              } else if (txt.includes('du mal a t\'endormir, ou tu te reveilles pendant la nuit')) {
+                currentReplies = [
+                  { label: '😩 Mal à m\'endormir', text: 'du mal a m\'endormir' },
+                  { label: '😰 Réveils nocturnes', text: 'je me reveille pendant la nuit' },
+                ]
+              } else if (txt.includes('quelle heure tu te couches')) {
+                currentReplies = [
+                  { label: '🌙 Avant 22h', text: 'je me couche a 22h' },
+                  { label: '🌃 Après 23h', text: 'je me couche vers minuit' },
+                ]
+              // --- PLATEAU ---
+              } else if (txt.includes('moins de 2 semaines ou plus de 2 semaines')) {
+                currentReplies = [
+                  { label: '📅 < 2 semaines', text: 'moins de 2 semaines' },
+                  { label: '📆 > 2 semaines', text: 'plus de 2 semaines' },
+                ]
+              } else if (txt.includes('sur quel exercice tu stagnes ? tractions, pompes, ou dips')) {
+                currentReplies = [
+                  { label: '🔥 Tractions', text: 'stagne tractions' },
+                  { label: '🏋️ Pompes', text: 'stagne pompes' },
+                  { label: '💪 Dips', text: 'stagne dips' },
+                ]
+              // --- EQUIPEMENT ---
+              } else if (txt.includes('quoi acheter en priorite, ou') && txt.includes('optimiser ce que tu as')) {
+                currentReplies = [
+                  { label: '🛒 Quoi acheter', text: 'quoi acheter en priorite' },
+                  { label: '⚙️ Optimiser', text: 'optimiser ce que j\'ai' },
                 ]
               }
             }
