@@ -156,6 +156,28 @@ export default function CoachPage() {
                   { label: '📉 Plus de progrès', text: 'Je ne progresse plus' },
                   { label: '↩️ Retour', text: 'Merci, c\'est tout' },
                 ]
+              } else if (txt.includes('trop facile, parfaite, ou vraiment epuisante ?')) {
+                currentReplies = [
+                  { label: '🥱 Trop facile', text: 'C\'était trop facile' },
+                  { label: '👌 Parfaite', text: 'C\'était une séance parfaite' },
+                  { label: '🥵 Épuisante', text: 'C\'était épuisante' },
+                ]
+              } else if (txt.includes('perdre du gras') || txt.includes('objectif principal aujourd\'hui')) {
+                currentReplies = [
+                  { label: '🔥 Sèche', text: 'Je veux faire une seche' },
+                  { label: '💪 Prise de Masse', text: 'Je veux faire une prise de masse' },
+                  { label: '⚖️ Maintien', text: 'Je veux faire un maintien' },
+                ]
+              } else if (txt.includes('zen ou sous grosse pression ?')) {
+                currentReplies = [
+                  { label: '🧘 Zen', text: 'Je suis zen' },
+                  { label: '🤯 Sous pression', text: 'Je suis sous pression' },
+                ]
+              } else if (txt.includes('15 min ou 30 min ?')) {
+                currentReplies = [
+                  { label: '⚡ 15 min', text: 'J\'ai 15 min' },
+                  { label: '⏱️ 30 min', text: 'J\'ai 30 min' },
+                ]
               }
             }
             return currentReplies.map((qr) => (

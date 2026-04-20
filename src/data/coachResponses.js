@@ -248,6 +248,84 @@ if (/plateau|bloque|plus de progr|stagne|stagnation|progresse plus/.test(text)) 
   ])
 }
 
+// NOUVEAU: BILAN SEANCE (RPE)
+if (/bilan de ma derniere seance/.test(text)) {
+  return pick([
+    `On va faire un point RPE (Ressenti). Comment s'est passee la derniere seance ? Trop facile, parfaite, ou vraiment epuisante ?`,
+  ])
+}
+if (/trop facile/.test(text)) {
+  return pick([
+    `Message recu. Si c'est trop facile, c'est que tu t'es adapte. Augmente tes max dans le profil ou ralentis ton tempo d'execution (3s a la descente). La prochaine va piquer.`,
+  ])
+}
+if (/parfaite/.test(text)) {
+  return pick([
+    `Excellent. C'est la zone d'or (RPE 8). Tu as stimule le muscle sans detruire ton systeme nerveux. Continue exactement sur ce rythme.`,
+  ])
+}
+if (/epuisante|épuisante/.test(text)) {
+  return pick([
+    `Systeme nerveux tape. Normal si c'etait une seance Intensite. Assure-toi de dormir 8h cette nuit et charge un peu plus en glucides pour refaire tes reserves de glycogene.`,
+  ])
+}
+
+// NOUVEAU: OBJECTIFS
+if (/point sur mon objectif/.test(text)) {
+  return pick([
+    `A ${weight}kg, la strategie n'est pas la meme. Ton objectif principal aujourd'hui : perdre du gras (seche), construire du muscle (prise de masse) ou maintien ?`,
+  ])
+}
+if (/seche|sèche|perdre gras/.test(text)) {
+  return pick([
+    `Objectif Seche. La cle : maintiens tes proteines a ${protTarget}g pour garder le muscle. Le deficit calorique fera fondre le gras. Les seances de musculation envoient le signal "ne brule pas mes muscles".`,
+  ])
+}
+if (/prise de masse/.test(text)) {
+  return pick([
+    `Prise de Masse. Il te faut un surplus calorique (+300kcal). Augmente tes glucides (riz, avoine, patates douces). Et surtout, cherche la surcharge progressive (plus de reps ou plus dur) a chaque seance.`,
+  ])
+}
+if (/maintien/.test(text)) {
+  return pick([
+    `Maintien. L'approche la plus saine sur le long terme. Ton focus doit etre la performance pure : devenir plus fort aux tractions et aux pompes, sans te preoccuper de la balance.`,
+  ])
+}
+
+// NOUVEAU: STRESS & MENTAL
+if (/niveau de stress/.test(text)) {
+  return pick([
+    `Le stress chronique (cortisol eleve) bloque l'hypertrophie et favorise le stockage du gras abdominal. Comment tu te sens recemment ? Plutot zen ou sous grosse pression ?`,
+  ])
+}
+if (/suis zen/.test(text)) {
+  return pick([
+    `Top. Ton systeme nerveux est frais et receptif. C'est le moment de pousser tes records personnels sur les gros mouvements. Profites-en.`,
+  ])
+}
+if (/sous pression/.test(text)) {
+  return pick([
+    `Le stress draine ton energie d'adaptation. Fais tes seances, mais eloigne-toi de l'echec musculaire. La seance doit te vider la tete, pas epuiser ton systeme nerveux.`,
+  ])
+}
+
+// NOUVEAU: TEMPS & PLANNING
+if (/pas beaucoup de temps|manque de temps/.test(text)) {
+  return pick([
+    `Le manque de temps est l'excuse #1. Mais 15 minutes bien intenses valent mieux que 0. Tu as combien de temps generalement ? 15 min ou 30 min ?`,
+  ])
+}
+if (/15 min|15min/.test(text)) {
+  return pick([
+    `Format 15 minutes = EMOM (Every Minute on the Minute). Prends 2 exos (ex: Pompes/Squats). Min 1: 15 pompes. Min 2: 20 squats. Alterne pendant 15 minutes non-stop. Ca brule.`,
+  ])
+}
+if (/30 min|30min/.test(text)) {
+  return pick([
+    `30 minutes c'est LARGEMENT suffisant. Fais le programme normal du jour, mais coupe tous tes temps de repos en deux (45s max). Tu auras un gros benefice cardio en plus de la force.`,
+  ])
+}
+
 // BLESSURE
 if (/bless|douleur aigue|tendinite|epaule|poignet|dos|genou|cheville|claquage/.test(text)) {
   return pick([
@@ -344,13 +422,17 @@ const defaults = [
 
 export const QUICK_REPLIES = [
   { label: '📊 Mon bilan', text: 'Ou j\'en suis dans ma progression ?' },
+  { label: '🎯 Mon objectif', text: 'Je veux faire le point sur mon objectif' },
   { label: '💪 Seance du jour', text: 'Conseils pour ma seance aujourd\'hui' },
+  { label: '📈 Bilan séance', text: 'Bilan de ma derniere seance' },
   { label: '🥗 Nutrition', text: 'Conseils nutrition pour moi' },
   { label: '🔥 Motivation', text: 'J\'ai du mal a me motiver' },
+  { label: '🧘 Stress', text: 'Mon niveau de stress' },
+  { label: '⏱️ Temps', text: 'Je manque de temps' },
   { label: '💤 Recuperation', text: 'J\'ai des courbatures aujourd\'hui' },
   { label: '💧 Hydratation', text: 'Combien d\'eau dois-je boire ?' },
   { label: '🏆 Mon streak', text: 'Comment est mon streak ?' },
   { label: '🎯 Plateau', text: 'Je ne progresse plus' },
-  { label: '🔧 Mon equipement', text: 'Quel equipement j\'ai ?' },
+  { label: '🔧 Equipement', text: 'Quel equipement j\'ai ?' },
   { label: '😴 Sommeil', text: 'Je n\'ai pas bien dormi' },
 ]
