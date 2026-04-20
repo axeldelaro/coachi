@@ -120,42 +120,22 @@ export default function CoachPage() {
         <div ref={endRef} />
       </div>
 
-      {/* Quick replies */}
-      <div className="shrink-0 px-4 py-2 border-t border-white/5">
-        <div className="flex gap-2 overflow-x-auto" style={{ scrollbarWidth: 'none', paddingBottom: 2 }}>
+      {/* Quick replies block (Only way to interact) */}
+      <div className="shrink-0 px-4 pb-6 pt-3 border-t border-white/5 bg-[#050505]">
+        <p className="text-[10px] uppercase tracking-widest text-white/30 font-semibold mb-3 text-center">Sélectionne un sujet</p>
+        <div className="flex flex-wrap gap-2 justify-center">
           {QUICK_REPLIES.map((qr) => (
             <button
               key={qr.label}
               onClick={() => send(qr.text)}
               disabled={typing}
-              className="shrink-0 text-xs px-3 py-1.5 rounded-full text-white/60 font-medium tap-scale whitespace-nowrap transition-all disabled:opacity-40"
-              style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.1)' }}
+              className="text-xs px-4 py-2.5 rounded-xl text-white font-medium tap-scale transition-all disabled:opacity-30"
+              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}
             >
               {qr.label}
             </button>
           ))}
         </div>
-      </div>
-
-      {/* Input bar */}
-      <div className="shrink-0 px-4 pb-6 pt-2">
-        <form onSubmit={handleSubmit} className="flex gap-2 items-center">
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Pose une question à ton coach…"
-            className="input-dark flex-1 text-sm"
-            style={{ paddingTop: 12, paddingBottom: 12, fontSize: 14 }}
-          />
-          <button
-            type="submit"
-            disabled={!input.trim() || typing}
-            className="w-12 h-12 rounded-2xl flex items-center justify-center tap-scale shrink-0 transition-opacity disabled:opacity-30"
-            style={{ background: 'var(--accent)' }}
-          >
-            <Send size={16} className="text-white" />
-          </button>
-        </form>
       </div>
 
       <style>{`
