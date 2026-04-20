@@ -1,4 +1,4 @@
-﻿// Coach IA — Moteur de reponses etendu, 300+ variantes, style humain
+// Coach IA — Moteur de reponses etendu, 300+ variantes, style humain
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)]
 const pickW = (weighted) => { const r = Math.random(); let s = 0; for (const [item, w] of weighted) { s += w; if (r < s) return item } return weighted[0][0] }
 
@@ -178,7 +178,8 @@ export function getCoachResponse(input, profile, iaState, logs) {
   // TRACTIONS
   if (/traction|pull.?up|chin.?up|tirage|barre de traction|tirer/.test(text)) {
     return pick([
-      `${maxPull} tractions max (${pullLevel}). ${maxPull<5?'Focus : retractions scapulaires, dead hangs, negatifs 5s. La force vient.':maxPull<10?'Ajoute les variantes : large, neutre, supination. Plus de volume.':maxPull<18?'Archer pull-ups, L-sit pull-ups, typewriter — tes prochaines cibles.':'Muscle-up, one-arm progressions — le prochain niveau t\'attend.'}\nUpdate ton max dans le Profil apres chaque test.`,
+      `${maxPull} tractions max (${pullLevel}). ${maxPull<5?'Focus : retractions scapulaires, dead hangs, negatifs 5s. La force vient.':maxPull<10?'Ajoute les variantes : large, neutre, supination. Plus de volume.':maxPull<18?'Archer pull-ups, L-sit pull-ups, typewriter — tes prochaines cibles.':'Muscle-up, one-arm progressions — le prochain niveau t\'attend.'}
+Update ton max dans le Profil apres chaque test.`,
       `Pour progresser en tractions : Greasing the Groove (GtG). Faire quelques reps propres plusieurs fois dans la journee sans aller a l'echec. Ca marche vraiment. Essaie avec ta barre.`,
       `Les tractions c'est le roi. A ${maxPull} reps tu es ${maxPull<5?'en phase de construction — tout est normal':maxPull<12?'intermediaire — variation et volume vont faire progresser vite':'a un niveau qui impressionne la plupart des gens'}. Question precise sur les tractions ?`,
       `Pour le volume en tractions : reste a 60-70% du max sur les series de volume. Une fois par semaine seulement, cherche le max. Ne va JAMAIS a l'echec en volume — seulement en test.`,
