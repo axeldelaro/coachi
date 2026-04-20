@@ -15,13 +15,17 @@ export default function AuthPage() {
     e.preventDefault()
     setError('')
     setLoading(true)
+    console.log(`[Auth] Tentative ${mode} pour : ${email}`)
     try {
       if (mode === 'login') {
-        await signInWithEmailAndPassword(auth, email, password)
+        const cred = await signInWithEmailAndPassword(auth, email, password)
+        console.log('[Auth] ✅ Connexion réussie :', cred.user.uid)
       } else {
-        await createUserWithEmailAndPassword(auth, email, password)
+        const cred = await createUserWithEmailAndPassword(auth, email, password)
+        console.log('[Auth] ✅ Compte créé :', cred.user.uid)
       }
     } catch (err) {
+      console.error('[Auth] ❌ Erreur Firebase :', err.code, err.message)
       const msgs = {
         'auth/user-not-found':      'Aucun compte trouvé.',
         'auth/wrong-password':      'Mot de passe incorrect.',
@@ -29,8 +33,12 @@ export default function AuthPage() {
         'auth/weak-password':       'Mot de passe trop faible (6 caractères min).',
         'auth/invalid-email':       'Email invalide.',
         'auth/invalid-credential':  'Identifiants incorrects.',
+        'auth/network-request-failed': 'Erreur réseau. Vérifie ta connexion.',
+        'auth/too-many-requests':   'Trop de tentatives. Réessaie plus tard.',
+        'auth/unauthorized-domain': 'Domaine non autorisé dans Firebase.',
       }
-      setError(msgs[err.code] || 'Une erreur est survenue.')
+      const msg = msgs[err.code] || `Erreur : ${err.code}`
+      setError(msg)
     } finally {
       setLoading(false)
     }
