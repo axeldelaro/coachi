@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { signOut } from 'firebase/auth'
 import { auth } from '../firebase'
 import useUserDoc from '../hooks/useUserDoc'
 import { useTheme } from '../context/ThemeContext'
-import { LogOut, Save } from 'lucide-react'
+import { LogOut, Plus, Minus } from 'lucide-react'
 
 const ACCENT_PRESETS = [
   { label: 'Rouge',   value: '#ff3b30' },
@@ -45,24 +45,39 @@ function Toggle({ id, checked, onChange, label, desc }) {
   )
 }
 
-function SliderRow({ id, label, value, min, max, step = 1, unit, onChange }) {
+function StepperRow({ id, label, value, min, max, step = 1, unit, onChange }) {
+  const handleDec = () => {
+    if (value - step >= min) onChange(value - step)
+  }
+  const handleInc = () => {
+    if (value + step <= max) onChange(value + step)
+  }
+
   return (
-    <div>
-      <div className="flex justify-between mb-2">
-        <label className="text-sm text-white">{label}</label>
-        <span className="text-sm font-bold accent-text">{value} {unit}</span>
+    <div className="flex items-center justify-between py-2 border-b border-white/5 last:border-0">
+      <div className="flex flex-col pr-4">
+        <label className="text-sm text-white font-medium">{label}</label>
+        {unit && <span className="text-[10px] text-white/30 uppercase tracking-wider mt-0.5">{unit}</span>}
       </div>
-      <input
-        id={id}
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-full"
-        style={{ accentColor: 'var(--accent)' }}
-      />
+      <div className="flex items-center gap-3 shrink-0">
+        <button 
+          onClick={handleDec} 
+          disabled={value <= min}
+          className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center tap-scale disabled:opacity-20"
+        >
+          <Minus size={14} className="text-white" />
+        </button>
+        <div className="w-12 text-center">
+          <span className="text-base font-bold accent-text">{value}</span>
+        </div>
+        <button 
+          onClick={handleInc} 
+          disabled={value >= max}
+          className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center tap-scale disabled:opacity-20"
+        >
+          <Plus size={14} className="text-white" />
+        </button>
+      </div>
     </div>
   )
 }
@@ -72,35 +87,49 @@ export default function ProfilePage() {
   const { updateProfile }        = useUserDoc()
   const { setAccent, accent }    = useTheme()
 
-  const profile = data?.profile
-  const [name,       setName]      = useState(profile?.name          ?? '')
-  const [weight,     setWeight]    = useState(profile?.weight        ?? 75)
-  const [maxPull,    setMaxPull]   = useState(profile?.maxPullups    ?? 8)
-  const [maxPush,    setMaxPush]   = useState(profile?.maxPushups    ?? 30)
-  const [maxDips,    setMaxDips]   = useState(profile?.maxDips       ?? 15)
-  const [maxHang,    setMaxHang]   = useState(profile?.maxHangSeconds ?? 30)
-  const [equip,      setEquip]     = useState(profile?.equip ?? {
-    pullupBar: true, dipBars: false, rings: false, parallettes: false,
-    kettlebell: false, jumpRope: false, vest: false, band: false, abWheel: false,
-  })
-  const [saved, setSaved] = useState(false)
+  const profile = data?.profile || {}
+  const profileRef = useRef(profile)
 
-  const handleSave = async () => {
-    await updateProfile({
-      name,
-      weight:         +weight,
-      maxPullups:     +maxPull,
-      maxPushups:     +maxPush,
-      maxDips:        +maxDips,
-      maxHangSeconds: +maxHang,
-      equip,
-      theme: accent,
-    })
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+  useEffect(() => {
+    profileRef.current = profile
+  }, [profile])
+
+  const [localProf, setLocalProf] = useState({
+    name:           profile.name           ?? '',
+    weight:         profile.weight         ?? 75,
+    maxPullups:     profile.maxPullups     ?? 8,
+    maxPushups:     profile.maxPushups     ?? 30,
+    maxDips:        profile.maxDips        ?? 15,
+    maxHangSeconds: profile.maxHangSeconds ?? 30,
+    equip:          profile.equip          ?? {
+      pullupBar: true, dipBars: false, rings: false, parallettes: false,
+      kettlebell: false, jumpRope: false, vest: false, band: false, abWheel: false,
+    }
+  })
+
+  const handleChange = (key, value) => {
+    setLocalProf((prev) => ({ ...prev, [key]: value }))
   }
 
-  const toggleEquip = (key) => setEquip((prev) => ({ ...prev, [key]: !prev[key] }))
+  const toggleEquip = (key) => {
+    setLocalProf((prev) => ({
+      ...prev,
+      equip: { ...prev.equip, [key]: !prev.equip[key] }
+    }))
+  }
+
+  // Auto-save debounce
+  useEffect(() => {
+    const t = setTimeout(() => {
+      // Build the final object to save
+      const toSave = { ...profileRef.current, ...localProf, theme: accent }
+      // Compare minimally
+      if (JSON.stringify(toSave) !== JSON.stringify(profileRef.current)) {
+        updateProfile(toSave)
+      }
+    }, 600)
+    return () => clearTimeout(t)
+  }, [localProf, accent, updateProfile])
 
   return (
     <div className="px-4 py-5 pb-28 flex flex-col gap-5">
@@ -116,28 +145,30 @@ export default function ProfilePage() {
           id="profile-name"
           type="text"
           placeholder="Ton prénom"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          value={localProf.name}
+          onChange={(e) => handleChange('name', e.target.value)}
           className="input-dark"
         />
       </div>
 
       {/* Body metrics */}
-      <div className="glass rounded-2xl p-4 flex flex-col gap-5 fade-up" style={{ animationDelay: '0.1s' }}>
-        <p className="text-xs uppercase tracking-widest text-white/30 font-semibold">Métriques Corporelles</p>
-        <SliderRow id="profile-weight"  label="Poids"           value={weight}  min={40}  max={150} step={0.5} unit="kg"  onChange={setWeight} />
+      <div className="glass rounded-2xl p-4 flex flex-col fade-up" style={{ animationDelay: '0.1s' }}>
+        <p className="text-xs uppercase tracking-widest text-white/30 font-semibold mb-2">Métriques Corporelles</p>
+        <StepperRow id="profile-weight"  label="Poids Actuel" value={localProf.weight} min={40} max={150} step={0.5} unit="kg" onChange={(v) => handleChange('weight', v)} />
       </div>
 
       {/* Performance maxes */}
-      <div className="glass rounded-2xl p-4 flex flex-col gap-5 fade-up" style={{ animationDelay: '0.12s' }}>
-        <div>
+      <div className="glass rounded-2xl p-4 flex flex-col fade-up" style={{ animationDelay: '0.12s' }}>
+        <div className="mb-2">
           <p className="text-xs uppercase tracking-widest text-white/30 font-semibold">Maxima d'Exercices</p>
           <p className="text-[10px] text-white/20 mt-1">Mets à jour après chaque test — les séances s'ajustent automatiquement</p>
         </div>
-        <SliderRow id="profile-pullups"  label="Max Tractions"   value={maxPull} min={1}   max={40}  unit="reps" onChange={setMaxPull} />
-        <SliderRow id="profile-pushups"  label="Max Pompes"      value={maxPush} min={1}   max={100} unit="reps" onChange={setMaxPush} />
-        <SliderRow id="profile-dips"     label="Max Dips"        value={maxDips} min={1}   max={60}  unit="reps" onChange={setMaxDips} />
-        <SliderRow id="profile-hang"     label="Suspension Max"  value={maxHang} min={5}   max={180} step={5}   unit="sec"  onChange={setMaxHang} />
+        <div className="flex flex-col">
+          <StepperRow id="profile-pullups" label="Tractions Poids de corps" value={localProf.maxPullups} min={0} max={50} unit="reps" onChange={(v) => handleChange('maxPullups', v)} />
+          <StepperRow id="profile-pushups" label="Pompes Classiques" value={localProf.maxPushups} min={0} max={100} unit="reps" onChange={(v) => handleChange('maxPushups', v)} />
+          <StepperRow id="profile-dips" label="Dips" value={localProf.maxDips} min={0} max={80} unit="reps" onChange={(v) => handleChange('maxDips', v)} />
+          <StepperRow id="profile-hang" label="Suspension Barre" value={localProf.maxHangSeconds} min={5} max={180} step={5} unit="sec" onChange={(v) => handleChange('maxHangSeconds', v)} />
+        </div>
       </div>
 
       {/* Equipment */}
@@ -151,7 +182,7 @@ export default function ProfilePage() {
             <Toggle
               key={key}
               id={`equip-${key}`}
-              checked={equip[key] ?? false}
+              checked={localProf.equip[key] ?? false}
               onChange={() => toggleEquip(key)}
               label={`${icon} ${label}`}
               desc={desc}
@@ -181,10 +212,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Save */}
-      <button id="profile-save" onClick={handleSave} className="btn-primary flex items-center justify-center gap-2 fade-up" style={{ animationDelay: '0.25s' }}>
-        {saved ? '✓ Sauvegardé !' : <><Save size={16} /> Sauvegarder</>}
-      </button>
+      {/* Remove save button entirely, rely on auto-save */}
 
       {/* Logout */}
       <button
