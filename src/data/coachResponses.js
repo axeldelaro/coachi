@@ -91,16 +91,80 @@ export function getCoachResponse(input, profile, iaState, logs) {
     ])
   }
 
-  // NUTRITION
-  if (/manger|nourriture|calorie|proteine|diete|nutrition|faim|assiette|repas|glucide|lipide|sucre|masse|seche/.test(text)) {
+  // NUTRITION - NIVEAU 1
+  if (/nutrition pour moi|conseils nutrition|diete|manger|nourriture/.test(text)) {
     return pick([
-      `Nutrition a ${weight}kg — cible proteines ~${protTarget}g/jour. Multiplicateur calories x${calMult.toFixed(2)}.\nLa regle : proteines a CHAQUE repas, glucides complexes autour des seances, lipides sains le soir. Ta liste de courses respecte ca.`,
-      `80% de la progression c'est la bouffe. ${calMult > 1.0 ? `Tu es a x${calMult.toFixed(2)} calories — le corps travaille fort, nourris la machine.` : `Tu es a x${calMult.toFixed(2)} — plan de recalibration.`}\nTu veux qu'on rentre dans un repas specifique ?`,
-      `Proteines : ${protTarget}g/jour pour ${weight}kg. Tu y arrives ? C'est la que ca peche souvent. Pense : oeuf + fromage blanc + poulet + poisson sur la journee.`,
-      `La diete c'est pas une punition, c'est un outil de performance. A ${weight}kg : ${protTarget}g proteines, glucides autour des seances, lipides bonne qualite. Ton plan est deja calibre dans l'appli.`,
-      `Repas autour de la seance — crucial. Avant (si tu manges) : glucides legers 1-2h avant. Apres : proteines dans les 45 min. Mais reste dans le plan de diete de base.`,
-      `Envie de cheat meal ? Je vais pas te juger. Un repas libre bien place (surtout le soir post-seance intense) peut meme aider psychologiquement. L'important c'est la semaine entiere, pas un repas.`,
-      `${calMult < 1.0 ? `Multiplicateur calories a x${calMult.toFixed(2)} — le systeme a legevement reduit tes portions suite a tes bilans. Continue l'effort.` : `Multiplicateur a x${calMult.toFixed(2)} — bonne energie, continue comme ca.`}`,
+      `Nutrition. La base de tout. Tu veux qu'on parle de tes proteines, de tes glucides, ou de tes graisses (lipides) ?`,
+    ])
+  }
+  // NUTRITION - NIVEAU 2 (Protéines)
+  if (/mes proteines|mes protéines/.test(text)) {
+    return pick([
+      `Les proteines sont tes briques de construction. A ${weight}kg, tu vises ~${protTarget}g/jour. Tu y arrives facilement, ou ca bloque souvent ?`,
+    ])
+  }
+  // NUTRITION - NIVEAU 3 (Protéines bloquent)
+  if (/ca bloque|ça bloque/.test(text)) {
+    return pick([
+      `Ok, on va fractionner. Quel repas est systematiquement le plus faible en proteines pour toi ? Le petit-dej, le dejeuner, ou le diner ?`,
+    ])
+  }
+  // NUTRITION - NIVEAU 4 (Repas spécifiques)
+  if (/petit.dej|petit dej/.test(text)) {
+    return pick([
+      `Classique. Ajoute simplement 2 oeufs (12g) ou 150g de skyr/fromage blanc (15g) a ton avoine. C'est rapide et ca regle le probleme du matin.`,
+    ])
+  }
+  if (/le dejeuner|le déjeuner/.test(text)) {
+    return pick([
+      `Au dejeuner, la regle est simple : la portion de viande, de poisson ou de tofu doit faire la taille de ta main (paume + doigts). Double la si necessaire.`,
+    ])
+  }
+  if (/le diner|le dîner/.test(text)) {
+    return pick([
+      `Si tu n'as plus tres faim le soir mais qu'il te manque des proteines, prends une source legere : un shaker de whey, ou du cottage cheese. Ca passe tout seul.`,
+    ])
+  }
+  // NUTRITION - NIVEAU 3 (Protéines OK)
+  if (/j'y arrive facilement/.test(text)) {
+    return pick([
+      `Parfait. Si tes proteines sont a ${protTarget}g et ton entrainement est regulier, la construction musculaire est mathematiquement garantie. Patience.`,
+    ])
+  }
+
+  // NUTRITION - NIVEAU 2 (Glucides)
+  if (/mes glucides/.test(text)) {
+    return pick([
+      `Les glucides = ton energie pure. Te sens-tu souvent en manque d'energie pendant la seance, ou plutot gonfle apres les repas ?`,
+    ])
+  }
+  // NUTRITION - NIVEAU 3 (Glucides réponses)
+  if (/manque d'energie|manque d'énergie/.test(text)) {
+    return pick([
+      `C'est un manque de glycogene. Mange une banane, des dattes ou un peu de miel 30 minutes avant l'entrainement. Ton energie va exploser.`,
+    ])
+  }
+  if (/plutot gonfle|gonflé/.test(text)) {
+    return pick([
+      `Tu manges peut-etre trop de glucides d'un coup (riz, pates) ou pas assez de fibres. Garde la grosse portion de glucides pour le repas APRES la seance.`,
+    ])
+  }
+
+  // NUTRITION - NIVEAU 2 (Lipides)
+  if (/mes graisses|mes lipides/.test(text)) {
+    return pick([
+      `Ne coupe JAMAIS les graisses. Elles gerent ta testosterone et tes hormones. Tu consommes assez d'avocat, d'huile d'olive et d'oleagineux (amandes, noix) ?`,
+    ])
+  }
+  // NUTRITION - NIVEAU 3 (Lipides réponses)
+  if (/assez de lipides|oui pour les graisses/.test(text)) {
+    return pick([
+      `Parfait. C'est le secret d'un systeme hormonal sain et d'une bonne recuperation nerveuse.`,
+    ])
+  }
+  if (/pas assez de lipides|non pour les graisses/.test(text)) {
+    return pick([
+      `Attention. Ajoute 1 cuillere a soupe d'huile d'olive par jour sur tes legumes, ou 15g d'amandes en collation. Ca fait une enorme difference.`,
     ])
   }
 
@@ -216,16 +280,123 @@ if (/suspendu|hang|accroché|grip|poigne|avant.bras|forearm|poignet/.test(text))
   ])
 }
 
-// MOTIVATION
-if (/motiv|decourag|abandon|lach|arret|difficile|plus envie|flemme|j'y arrive pas|j'arrive pas|peux plus/.test(text)) {
+// MINDSET & HABITUDES - NIVEAU 1
+if (/mon mindset|motivation|decourag|abandon|lach|arret|difficile|plus envie|flemme|j'y arrive pas|j'arrive pas|peux plus/.test(text)) {
   return pick([
-    `Ecoute ${name}. Le fait que tu me poses la question plutot que d'avoir simplement arrete — c'est deja la reponse. Tu n'as pas abandonne. Tu cherches. Bonne direction.`,
-    `Tu te souviens du premier jour ? De ce que tu voulais accomplir ? Cette raison n'a pas change. C'est le chemin qui est difficile — pas la destination.`,
-    `Les jours sans envie, fais JUSTE les 5 premieres minutes. Juste demarrer. Dans 80% des cas tu continues. Et si tu t'arretes apres 5 min, t'as quand meme fait quelque chose.`,
-    `Flemme ou vraie fatigue physique ? C'est tres different. Flemme = go demarre. Fatigue physique reelle = repos actif aujourd'hui, seance demain. Diagnostique d'abord.`,
-    `Chaque athlete a des jours sans. Djokovic, LeBron, tout le monde. La difference ? Ils y vont quand meme. Fais juste le minimum — une serie, une marche. Le reste suit.`,
-    `Le corps reussit la ou l'esprit choisit de ne pas abandonner. ${streak} jours de streak — tu as deja prouve que t'en es capable. Aujourd'hui c'est juste un mauvais jour.`,
-    `Parfois le manque de motivation vient d'un manque de vision. Rappelle-toi pourquoi tu as commence. Ecris-le. Relis-le. Puis fais une seule chose concrete maintenant.`,
+    `La discipline, ca se construit. Motivation = ephemere. Quel est ton plus grand ennemi en ce moment ? La fatigue du travail, les distractions, ou le manque de resultats ?`,
+  ])
+}
+// MINDSET - NIVEAU 2
+if (/fatigue du travail/.test(text)) {
+  return pick([
+    `Est-ce que c'est une fatigue physique reelle (manque de sommeil, courbatures) ou une fatigue mentale (charge cognitive, stress) ?`,
+  ])
+}
+// MINDSET - NIVEAU 3
+if (/fatigue physique reelle/.test(text)) {
+  return pick([
+    `Si c'est physique, le corps a besoin de sommeil. La musculation detruit les fibres, c'est le sommeil qui les reconstruit. Fais un vrai repos actif aujourd'hui.`,
+  ])
+}
+if (/fatigue mentale|charge cognitive/.test(text)) {
+  return pick([
+    `La fatigue mentale te ment. Une fois chaud, le corps repondra. Vas-y pour juste 15 minutes. Dans 90% des cas, la seance va te vider la tete et tu vas la finir.`,
+  ])
+}
+
+// MINDSET - NIVEAU 2 (Autres)
+if (/les distractions|distractions/.test(text)) {
+  return pick([
+    `Le telephone est le pire ennemi de l'entrainement. Regle d'or : telephone en mode avion pendant ta seance. Pas de reseaux entre les series, juste de la musique.`,
+  ])
+}
+if (/manque de resultats/.test(text)) {
+  return pick([
+    `Le calisthenics demande 3 a 6 mois pour une transformation vraiment visible. A ${streak} jours, tu plantes les graines. La recolte vient plus tard. Patience.`,
+  ])
+}
+
+// TECHNIQUE / MOUVEMENT - NIVEAU 1
+if (/technique d'un mouvement/.test(text)) {
+  return pick([
+    `Ok, on ajuste la technique. Quel mouvement te pose probleme ? Les tractions, les pompes, les dips, ou le core (abdos) ?`,
+  ])
+}
+// TECHNIQUE - NIVEAU 2
+if (/les tractions.*probleme|tractions posent probleme/.test(text)) {
+  return pick([
+    `Sur les tractions, qu'est-ce qui lache en premier ? Ton dos, tes biceps, ou ton grip (ta poigne) ?`,
+  ])
+}
+// TECHNIQUE - NIVEAU 3 (Tractions)
+if (/mon dos lache/.test(text)) {
+  return pick([
+    `Si le dos lache, c'est que tu tires trop avec les bras. Fais du tirage inverse (sous une table) pour vraiment isoler et ressentir la contraction de tes omoplates.`,
+  ])
+}
+if (/mes biceps lachent/.test(text)) {
+  return pick([
+    `Varie tes prises. Fais plus de Chin-ups (supination) pour renforcer specifiquement les biceps.`,
+  ])
+}
+if (/mon grip lache/.test(text)) {
+  return pick([
+    `Grip faible = cerveau qui bride ta force par securite. Suspends-toi a la barre (Dead Hang) 60 secondes tous les jours. Ton grip va devenir de l'acier.`,
+  ])
+}
+
+// TECHNIQUE - NIVEAU 2 (Pompes)
+if (/les pompes.*probleme|pompes posent probleme/.test(text)) {
+  return pick([
+    `Pour les pompes : est-ce que tu as une douleur aux poignets, ou c'est juste un manque de force pure ?`,
+  ])
+}
+// TECHNIQUE - NIVEAU 3 (Pompes)
+if (/douleur aux poignets/.test(text)) {
+  return pick([
+    `Classique. Utilise des parallettes, ou fais tes pompes sur les poings. Ca garde les poignets droits. Et etire tes flechisseurs de poignet avant la seance.`,
+  ])
+}
+if (/manque de force pure/.test(text)) {
+  return pick([
+    `Le secret : les pompes negatives. Mets-toi en position haute, et descends le plus lentement possible (5-8 secondes). Remonte sur les genoux. Recommence.`,
+  ])
+}
+
+// CARDIO & SOUPLESSE - NIVEAU 1
+if (/cardio ou souplesse/.test(text)) {
+  return pick([
+    `On sort de la pure force. Tu veux parler de ton endurance (cardio) ou de ta mobilite (souplesse) ?`,
+  ])
+}
+if (/mon endurance.*cardio/.test(text)) {
+  return pick([
+    `Tu fais du cardio pour la sante de ton coeur, ou dans l'objectif principal de perdre du gras ?`,
+  ])
+}
+if (/sante de mon coeur/.test(text)) {
+  return pick([
+    `Parfait. Corde a sauter ou course legere, 2 fois par semaine pendant 30 min (Zone 2, tu dois pouvoir parler). Ca suffira amplement.`,
+  ])
+}
+if (/pour perdre du gras/.test(text)) {
+  return pick([
+    `Attention, le cardio ne fait pas maigrir si l'assiette est mauvaise. La diete fait 90% du travail. Le cardio c'est juste l'outil pour bruler 300kcal de plus.`,
+  ])
+}
+if (/ma mobilite.*souplesse/.test(text)) {
+  return pick([
+    `Tu te sens raide ? C'est plutot le bas du corps (hanches/jambes) ou le haut du corps (epaules/dos) qui bloque ?`,
+  ])
+}
+if (/bas du corps bloque/.test(text)) {
+  return pick([
+    `Passe 5 minutes cumulatives par jour en position de 'Deep Squat' (accroupi complet). Ca va decompresser ta colonne et ouvrir tes hanches.`,
+  ])
+}
+if (/haut du corps bloque/.test(text)) {
+  return pick([
+    `Prends un elastique ou un manche a balai, bras tendus, et fais des 'dislocates' (passages avant/arriere) 15 fois tous les matins. Tes epaules vont revivre.`,
   ])
 }
 
@@ -422,11 +593,13 @@ const defaults = [
 
 export const QUICK_REPLIES = [
   { label: '📊 Mon bilan', text: 'Ou j\'en suis dans ma progression ?' },
-  { label: '🎯 Mon objectif', text: 'Je veux faire le point sur mon objectif' },
   { label: '💪 Seance du jour', text: 'Conseils pour ma seance aujourd\'hui' },
-  { label: '📈 Bilan séance', text: 'Bilan de ma derniere seance' },
+  { label: '🛠️ Technique', text: 'Technique d\'un mouvement' },
   { label: '🥗 Nutrition', text: 'Conseils nutrition pour moi' },
-  { label: '🔥 Motivation', text: 'J\'ai du mal a me motiver' },
+  { label: '🧠 Mindset', text: 'Mon mindset' },
+  { label: '🏃 Cardio/Souplesse', text: 'Cardio ou Souplesse ?' },
+  { label: '🎯 Mon objectif', text: 'Je veux faire le point sur mon objectif' },
+  { label: '📈 Bilan séance', text: 'Bilan de ma derniere seance' },
   { label: '🧘 Stress', text: 'Mon niveau de stress' },
   { label: '⏱️ Temps', text: 'Je manque de temps' },
   { label: '💤 Recuperation', text: 'J\'ai des courbatures aujourd\'hui' },

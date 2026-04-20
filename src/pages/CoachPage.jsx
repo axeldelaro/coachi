@@ -143,7 +143,7 @@ export default function CoachPage() {
                   { label: '🔥 Courbatures', text: 'Ce sont juste des courbatures' },
                   { label: '↩️ Retour', text: 'Merci, c\'est tout' },
                 ]
-              } else if (txt.includes('repas specifique ?') || txt.includes('repas specifique')) {
+              } else if (txt.includes('repas specifique ?')) {
                 currentReplies = [
                   { label: '🍳 Petit-déj', text: 'Idée de repas pour le petit déjeuner' },
                   { label: '🥗 Déjeuner', text: 'Idée de repas pour le déjeuner' },
@@ -177,6 +177,76 @@ export default function CoachPage() {
                 currentReplies = [
                   { label: '⚡ 15 min', text: 'J\'ai 15 min' },
                   { label: '⏱️ 30 min', text: 'J\'ai 30 min' },
+                ]
+              // --- NOUVEAUX ARBRES PROFONDS ---
+              } else if (txt.includes('proteines, de tes glucides, ou de tes graisses')) {
+                currentReplies = [
+                  { label: '🥩 Protéines', text: 'mes proteines' },
+                  { label: '🍚 Glucides', text: 'mes glucides' },
+                  { label: '🥑 Graisses', text: 'mes graisses' },
+                ]
+              } else if (txt.includes('tu y arrives facilement, ou ca bloque')) {
+                currentReplies = [
+                  { label: '💪 Facilement', text: 'j\'y arrive facilement' },
+                  { label: '📉 Ça bloque', text: 'ca bloque' },
+                ]
+              } else if (txt.includes('le plus faible en proteines pour toi ?')) {
+                currentReplies = [
+                  { label: '🍳 Petit-déj', text: 'le petit dej' },
+                  { label: '🥗 Déjeuner', text: 'le dejeuner' },
+                  { label: '🍽️ Dîner', text: 'le diner' },
+                ]
+              } else if (txt.includes('manque d\'energie pendant la seance, ou plutot gonfle')) {
+                currentReplies = [
+                  { label: '🥱 Manque d\'énergie', text: 'manque d\'energie' },
+                  { label: '🎈 Gonflé', text: 'plutot gonfle' },
+                ]
+              } else if (txt.includes('assez d\'avocat, d\'huile d\'olive et d\'oleagineux')) {
+                currentReplies = [
+                  { label: '✅ Oui', text: 'oui pour les graisses' },
+                  { label: '❌ Non', text: 'non pour les graisses' },
+                ]
+              } else if (txt.includes('la fatigue du travail, les distractions, ou le manque de resultats')) {
+                currentReplies = [
+                  { label: '💼 Fatigue Travail', text: 'la fatigue du travail' },
+                  { label: '📱 Distractions', text: 'les distractions' },
+                  { label: '📉 Manque Résultats', text: 'le manque de resultats' },
+                ]
+              } else if (txt.includes('fatigue physique reelle') || txt.includes('fatigue mentale')) {
+                currentReplies = [
+                  { label: '🛌 Physique', text: 'fatigue physique reelle' },
+                  { label: '🤯 Mentale', text: 'fatigue mentale' },
+                ]
+              } else if (txt.includes('les tractions, les pompes, les dips, ou le core (abdos)')) {
+                currentReplies = [
+                  { label: '🔥 Tractions', text: 'les tractions posent probleme' },
+                  { label: '🏋️ Pompes', text: 'les pompes posent probleme' },
+                ]
+              } else if (txt.includes('ton dos, tes biceps, ou ton grip')) {
+                currentReplies = [
+                  { label: '🦍 Mon Dos', text: 'mon dos lache' },
+                  { label: '💪 Mes Biceps', text: 'mes biceps lachent' },
+                  { label: '✊ Mon Grip', text: 'mon grip lache' },
+                ]
+              } else if (txt.includes('douleur aux poignets, ou c\'est juste un manque de force')) {
+                currentReplies = [
+                  { label: '⚡ Douleur Poignets', text: 'douleur aux poignets' },
+                  { label: '📉 Manque Force', text: 'manque de force pure' },
+                ]
+              } else if (txt.includes('ton endurance (cardio) ou de ta mobilite (souplesse)')) {
+                currentReplies = [
+                  { label: '🏃 Cardio', text: 'mon endurance cardio' },
+                  { label: '🤸 Souplesse', text: 'ma mobilite souplesse' },
+                ]
+              } else if (txt.includes('sante de ton coeur, ou dans l\'objectif principal de perdre du gras')) {
+                currentReplies = [
+                  { label: '❤️ Santé (Cœur)', text: 'sante de mon coeur' },
+                  { label: '🔥 Perdre du Gras', text: 'pour perdre du gras' },
+                ]
+              } else if (txt.includes('bas du corps (hanches/jambes) ou le haut du corps (epaules/dos) qui bloque')) {
+                currentReplies = [
+                  { label: '🦵 Bas du Corps', text: 'bas du corps bloque' },
+                  { label: '🦍 Haut du Corps', text: 'haut du corps bloque' },
                 ]
               }
             }
