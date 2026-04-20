@@ -1,15 +1,26 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'
+import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '../firebase'
 import { Eye, EyeOff, Zap } from 'lucide-react'
 
 export default function AuthPage() {
+  const navigate = useNavigate()
   const [mode, setMode] = useState('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPw, setShowPw]   = useState(false)
   const [error, setError]     = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Si déjà connecté, redirige directement
+  useEffect(() => {
+    const unsub = onAuthStateChanged(auth, (u) => {
+      if (u) navigate('/dashboard', { replace: true })
+    })
+    return unsub
+  }, [navigate])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -20,9 +31,11 @@ export default function AuthPage() {
       if (mode === 'login') {
         const cred = await signInWithEmailAndPassword(auth, email, password)
         console.log('[Auth] ✅ Connexion réussie :', cred.user.uid)
+        navigate('/dashboard', { replace: true })
       } else {
         const cred = await createUserWithEmailAndPassword(auth, email, password)
         console.log('[Auth] ✅ Compte créé :', cred.user.uid)
+        navigate('/dashboard', { replace: true })
       }
     } catch (err) {
       console.error('[Auth] ❌ Erreur Firebase :', err.code, err.message)
