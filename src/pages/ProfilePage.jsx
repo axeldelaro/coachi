@@ -87,49 +87,51 @@ export default function ProfilePage() {
   const { updateProfile }        = useUserDoc()
   const { setAccent, accent }    = useTheme()
 
-  const profile = data?.profile || {}
-  const profileRef = useRef(profile)
+  const profile = data?.profile
+  const [name, setName] = useState('')
+  const nameInit = useRef(false)
 
+  // Initialize name once when profile loads
   useEffect(() => {
-    profileRef.current = profile
+    if (profile && !nameInit.current) {
+      setName(profile.name || '')
+      nameInit.current = true
+    }
   }, [profile])
 
-  const [localProf, setLocalProf] = useState({
-    name:           profile.name           ?? '',
-    weight:         profile.weight         ?? 75,
-    maxPullups:     profile.maxPullups     ?? 8,
-    maxPushups:     profile.maxPushups     ?? 30,
-    maxDips:        profile.maxDips        ?? 15,
-    maxHangSeconds: profile.maxHangSeconds ?? 30,
-    equip:          profile.equip          ?? {
-      pullupBar: true, dipBars: false, rings: false, parallettes: false,
-      kettlebell: false, jumpRope: false, vest: false, band: false, abWheel: false,
-    }
-  })
-
-  const handleChange = (key, value) => {
-    setLocalProf((prev) => ({ ...prev, [key]: value }))
-  }
-
-  const toggleEquip = (key) => {
-    setLocalProf((prev) => ({
-      ...prev,
-      equip: { ...prev.equip, [key]: !prev.equip[key] }
-    }))
-  }
-
-  // Auto-save debounce
+  // Auto-save name with debounce
   useEffect(() => {
-    const t = setTimeout(() => {
-      // Build the final object to save
-      const toSave = { ...profileRef.current, ...localProf, theme: accent }
-      // Compare minimally
-      if (JSON.stringify(toSave) !== JSON.stringify(profileRef.current)) {
-        updateProfile(toSave)
-      }
-    }, 600)
-    return () => clearTimeout(t)
-  }, [localProf, accent, updateProfile])
+    if (nameInit.current && profile && name !== profile.name) {
+      const t = setTimeout(() => {
+        updateProfile({ ...profile, name })
+      }, 600)
+      return () => clearTimeout(t)
+    }
+  }, [name, profile, updateProfile])
+
+  // Direct update for steppers
+  const handleUpdate = (key, value) => {
+    if (!profile) return
+    updateProfile({ ...profile, [key]: value })
+  }
+
+  // Direct update for toggles
+  const toggleEquip = (key) => {
+    if (!profile) return
+    updateProfile({
+      ...profile,
+      equip: { ...profile.equip, [key]: !profile.equip[key] }
+    })
+  }
+
+  // Handle theme update
+  const handleTheme = (val) => {
+    if (!profile) return
+    setAccent(val)
+    updateProfile({ ...profile, theme: val })
+  }
+
+  if (!profile) return null
 
   return (
     <div className="px-4 py-5 pb-28 flex flex-col gap-5">
@@ -145,8 +147,8 @@ export default function ProfilePage() {
           id="profile-name"
           type="text"
           placeholder="Ton prénom"
-          value={localProf.name}
-          onChange={(e) => handleChange('name', e.target.value)}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
           className="input-dark"
         />
       </div>
@@ -154,7 +156,7 @@ export default function ProfilePage() {
       {/* Body metrics */}
       <div className="glass rounded-2xl p-4 flex flex-col fade-up" style={{ animationDelay: '0.1s' }}>
         <p className="text-xs uppercase tracking-widest text-white/30 font-semibold mb-2">Métriques Corporelles</p>
-        <StepperRow id="profile-weight"  label="Poids Actuel" value={localProf.weight} min={40} max={150} step={0.5} unit="kg" onChange={(v) => handleChange('weight', v)} />
+        <StepperRow id="profile-weight"  label="Poids Actuel" value={profile.weight} min={40} max={150} step={0.5} unit="kg" onChange={(v) => handleUpdate('weight', v)} />
       </div>
 
       {/* Performance maxes */}
@@ -164,10 +166,10 @@ export default function ProfilePage() {
           <p className="text-[10px] text-white/20 mt-1">Mets à jour après chaque test — les séances s'ajustent automatiquement</p>
         </div>
         <div className="flex flex-col">
-          <StepperRow id="profile-pullups" label="Tractions Poids de corps" value={localProf.maxPullups} min={0} max={50} unit="reps" onChange={(v) => handleChange('maxPullups', v)} />
-          <StepperRow id="profile-pushups" label="Pompes Classiques" value={localProf.maxPushups} min={0} max={100} unit="reps" onChange={(v) => handleChange('maxPushups', v)} />
-          <StepperRow id="profile-dips" label="Dips" value={localProf.maxDips} min={0} max={80} unit="reps" onChange={(v) => handleChange('maxDips', v)} />
-          <StepperRow id="profile-hang" label="Suspension Barre" value={localProf.maxHangSeconds} min={5} max={180} step={5} unit="sec" onChange={(v) => handleChange('maxHangSeconds', v)} />
+          <StepperRow id="profile-pullups" label="Tractions Poids de corps" value={profile.maxPullups} min={0} max={50} unit="reps" onChange={(v) => handleUpdate('maxPullups', v)} />
+          <StepperRow id="profile-pushups" label="Pompes Classiques" value={profile.maxPushups} min={0} max={100} unit="reps" onChange={(v) => handleUpdate('maxPushups', v)} />
+          <StepperRow id="profile-dips" label="Dips" value={profile.maxDips} min={0} max={80} unit="reps" onChange={(v) => handleUpdate('maxDips', v)} />
+          <StepperRow id="profile-hang" label="Suspension Barre" value={profile.maxHangSeconds} min={5} max={180} step={5} unit="sec" onChange={(v) => handleUpdate('maxHangSeconds', v)} />
         </div>
       </div>
 
@@ -182,7 +184,7 @@ export default function ProfilePage() {
             <Toggle
               key={key}
               id={`equip-${key}`}
-              checked={localProf.equip[key] ?? false}
+              checked={profile.equip[key] ?? false}
               onChange={() => toggleEquip(key)}
               label={`${icon} ${label}`}
               desc={desc}
@@ -199,7 +201,7 @@ export default function ProfilePage() {
             <button
               key={value}
               id={`accent-${label}`}
-              onClick={() => setAccent(value)}
+              onClick={() => handleTheme(value)}
               title={label}
               className="w-10 h-10 rounded-xl tap-scale transition-all duration-150"
               style={{
