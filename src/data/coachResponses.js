@@ -1,4 +1,4 @@
-﻿// Coach IA — Moteur de reponses etendu, 300+ variantes, style humain
+// Coach IA — Moteur de reponses etendu, 300+ variantes, style humain
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)]
 const pickW = (weighted) => { const r = Math.random(); let s = 0; for (const [item, w] of weighted) { s += w; if (r < s) return item } return weighted[0][0] }
 
@@ -134,10 +134,10 @@ export function getCoachResponse(input, profile, iaState, logs) {
       `Courbatures ? Bonne nouvelle — fibres musculaires sollicitees. Mais distingue DOMS (courbatures musculaires normales) vs douleur articulaire (stop absolu). Lequel des deux ?`,
       `Si t'es vraiment epuise, la seance peut attendre 24h. Pas d'arret definitif — juste du bon sens. Ta progression sur 6 mois compte plus qu'une seance isolee.`,
       `Recuperation active recommandee : marche 20-30 min, mobilite articulaire, etirements doux. PAS d'intensite. Un vrai jour de repos c'est actif, pas affale sur le canape.`,
-      `J'entends. Le corps parle — faut l'ecouter. ${streak > 10 ? `Avec ${streak} jours de streak, tu merites peut-etre un vrai jour off.` : 'Reste dans le programme mais module l'intensite.'} Ou t' as mal exactement ? `,
+      `J'entends. Le corps parle — faut l'ecouter. ${streak > 10 ? `Avec ${streak} jours de streak, tu merites peut-etre un vrai jour off.` : 'Reste dans le programme mais module l\'intensite.'} Ou t\'as mal exactement ?`,
       `Douleur aigue ou diffuse ? Aigue = stop cet exercice, consulte.Diffuse / courbatures = OK pour mouvement legers.La difference est importante.`,
     ])
-  }
+    }
 
   // HYDRATATION
   if (/eau|hydrat|boire|soif|litre|deshydrat/.test(text)) {
@@ -168,12 +168,13 @@ export function getCoachResponse(input, profile, iaState, logs) {
     `${streak} jours. Pas commun du tout ${name}. La plupart abandonnent avant 2 semaines. Toi tu construis quelque chose de reel et durable.`,
     `Franchement impressionnant. ${streak} jours — l'habitude est ancree. Maintenant c'est une question d'identite, pas d'effort.`,
   ])
-  return pick([
-    `${streak} jours sans interruption. Niveau pro ${name}. La discipline est devenue qui tu es. Continue.`,
-    `${streak}j. Je n'ai rien a dire a part : respect. La majorite des gens ne depassent pas 7 jours. Toi tu en es a ${streak}.`,
-    `${streak} jours — c'est une transformation de personnalite, pas juste du sport. Tu n'es plus la meme personne qu'au jour 1. Felicitations.`,
-  ])
-}
+    return pick([
+      `${streak} jours sans interruption. Niveau pro ${name}. La discipline est devenue qui tu es. Continue.`,
+      `${streak}j. Je n'ai rien a dire a part : respect. La majorite des gens ne depassent pas 7 jours. Toi tu en es a ${streak}.`,
+      `${streak} jours — c'est une transformation de personnalite, pas juste du sport. Tu n'es plus la meme personne qu'au jour 1. Felicitations.`,
+    ])
+  }
+
 
 // TRACTIONS
 if (/traction|pull.?up|chin.?up|tirage|barre de traction|tirer/.test(text)) {
@@ -322,7 +323,7 @@ const defaults = [
   `Je suis la pour ca ${name}. Mais j'ai besoin d'un peu plus de detail pour te repondre utilement.`,
   `Rephrases differemment ? Je veux m'assurer de repondre a ce que tu demandes vraiment.`,
 ]
-return pick(defaults)
+  return pick(defaults)
 }
 
 export const QUICK_REPLIES = [
