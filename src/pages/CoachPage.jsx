@@ -120,21 +120,56 @@ export default function CoachPage() {
         <div ref={endRef} />
       </div>
 
-      {/* Quick replies block (Only way to interact) */}
+      {/* Quick replies block (Dynamic based on context) */}
       <div className="shrink-0 px-4 pb-6 pt-3 border-t border-white/5 bg-[#050505]">
-        <p className="text-[10px] uppercase tracking-widest text-white/30 font-semibold mb-3 text-center">Sélectionne un sujet</p>
+        <p className="text-[10px] uppercase tracking-widest text-white/30 font-semibold mb-3 text-center">Sélectionne une réponse</p>
         <div className="flex flex-wrap gap-2 justify-center">
-          {QUICK_REPLIES.map((qr) => (
-            <button
-              key={qr.label}
-              onClick={() => send(qr.text)}
-              disabled={typing}
-              className="text-xs px-4 py-2.5 rounded-xl text-white font-medium tap-scale transition-all disabled:opacity-30"
-              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}
-            >
-              {qr.label}
-            </button>
-          ))}
+          {(() => {
+            let currentReplies = QUICK_REPLIES
+            const lastMsg = messages[messages.length - 1]
+            if (lastMsg.role === 'coach') {
+              const txt = lastMsg.text.toLowerCase()
+              if (txt.includes('mouvement specifique ?') || txt.includes('quel exercice') || txt.includes('quelle zone')) {
+                currentReplies = [
+                  { label: '🔥 Tractions', text: 'Conseils pour les tractions' },
+                  { label: '🏋️ Pompes', text: 'Conseils pour les pompes' },
+                  { label: '💪 Dips', text: 'Conseils pour les dips' },
+                  { label: '🦵 Jambes', text: 'Conseils pour les jambes' },
+                  { label: '↩️ Retour', text: 'Merci, c\'est tout' },
+                ]
+              } else if (txt.includes('lequel des deux ?') || txt.includes('aigue ou diffuse ?')) {
+                currentReplies = [
+                  { label: '⚡ Douleur Aiguë', text: 'C\'est une douleur aigue' },
+                  { label: '🔥 Courbatures', text: 'Ce sont juste des courbatures' },
+                  { label: '↩️ Retour', text: 'Merci, c\'est tout' },
+                ]
+              } else if (txt.includes('repas specifique ?') || txt.includes('repas specifique')) {
+                currentReplies = [
+                  { label: '🍳 Petit-déj', text: 'Idée de repas pour le petit déjeuner' },
+                  { label: '🥗 Déjeuner', text: 'Idée de repas pour le déjeuner' },
+                  { label: '🍽️ Dîner', text: 'Idée de repas pour le dîner' },
+                  { label: '↩️ Retour', text: 'Merci, c\'est tout' },
+                ]
+              } else if (txt.includes('qu\'est-ce qui te bloque ?') || txt.includes('stagnation')) {
+                currentReplies = [
+                  { label: '🥱 Trop fatigué', text: 'Je suis trop fatigué' },
+                  { label: '📉 Plus de progrès', text: 'Je ne progresse plus' },
+                  { label: '↩️ Retour', text: 'Merci, c\'est tout' },
+                ]
+              }
+            }
+            return currentReplies.map((qr) => (
+              <button
+                key={qr.label}
+                onClick={() => send(qr.text)}
+                disabled={typing}
+                className="text-xs px-4 py-2.5 rounded-xl text-white font-medium tap-scale transition-all disabled:opacity-30"
+                style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}
+              >
+                {qr.label}
+              </button>
+            ))
+          })()}
         </div>
       </div>
 
