@@ -53,7 +53,11 @@ export default function CoachPage() {
       ) : (
         <div className="w-full flex flex-col gap-3 fade-up">
           <a
-            href="https://gemini.google.com/app?hl=fr"
+            href={
+              /Android/i.test(navigator.userAgent)
+                ? "intent://gemini.google.com/app?hl=fr#Intent;scheme=https;end"
+                : "https://gemini.google.com/app?hl=fr"
+            }
             target="_blank"
             rel="noopener noreferrer"
             className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl text-white font-bold text-base tap-scale transition-all"
@@ -63,8 +67,8 @@ export default function CoachPage() {
             Copié ! Ouvrir Gemini
             <ExternalLink size={16} className="text-white/50" />
           </a>
-          <p className="text-[10px] text-yellow-400/80 leading-relaxed px-2">
-            ⚠️ Si un écran blanc ou de chargement infini apparaît, touchez l'icône 🧭 (boussole) en bas à droite pour forcer l'ouverture dans Safari. C'est une sécurité d'Apple.
+          <p className="text-[10px] text-white/40 leading-relaxed px-2">
+            Sur Android, cela ouvrira directement votre navigateur ou l'application Gemini.
           </p>
         </div>
       )}
