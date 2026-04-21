@@ -46,7 +46,7 @@ export default function WorkoutPage() {
         />
       )}
 
-      <div className="px-4 py-5 pb-28 flex flex-col gap-5">
+      <div className="px-4 py-5 pb-28 flex flex-col gap-4">
         <div className="fade-up">
           <h2 className="text-xl font-black text-white">Programme</h2>
           <p className="text-xs text-white/30 mt-0.5">IA reps ×{repMult.toFixed(2)}</p>
@@ -96,7 +96,7 @@ export default function WorkoutPage() {
         ) : (
           <>
             {/* Exercise list */}
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               {resolvedExercises.map((ex, i) => {
                 const reps = calcReps(ex, profile)
                 const finalReps = Math.max(1, Math.round(reps * repMult))
@@ -104,32 +104,24 @@ export default function WorkoutPage() {
                   <button 
                     key={ex.id} 
                     onClick={() => setSelectedExercise(ex)}
-                    className="glass rounded-2xl p-4 fade-up text-left tap-scale transition-all w-full relative" 
+                    className="glass rounded-xl p-3 fade-up text-left tap-scale transition-all w-full flex items-center gap-3" 
                     style={{ animationDelay: `${0.12 + i * 0.04}s` }}
                   >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-[10px] font-bold text-white/30 uppercase tracking-wider">#{i + 1}</span>
-                          {ex.equipment && !equip[ex.equipment] && (
-                            <span className="text-[9px] px-1.5 py-0.5 rounded bg-yellow-500/15 text-yellow-400 font-medium">Substitué</span>
-                          )}
-                        </div>
-                        <p className="text-sm font-bold text-white pr-4">{ex.name}</p>
-                        <p className="text-xs text-white/40 mt-1">
-                          {ex.sets} × {finalReps}{ex.isTime ? 's' : ' reps'} · {Math.round(ex.intensityPct * 100)}% intensité
-                        </p>
-                        {ex.target && (
-                          <p className="text-[11px] text-white/25 mt-1.5 italic line-clamp-1">{ex.target}</p>
+                    <div className="w-10 h-10 rounded-lg bg-white/5 flex flex-col items-center justify-center shrink-0">
+                      <span className="text-sm font-black accent-text leading-none">{finalReps}</span>
+                      <span className="text-[8px] text-white/40 uppercase tracking-widest mt-0.5">{ex.isTime ? 'sec' : 'reps'}</span>
+                    </div>
+                    
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-bold text-white truncate">{ex.name}</p>
+                        {ex.equipment && !equip[ex.equipment] && (
+                          <span className="text-[8px] px-1.5 py-0.5 rounded bg-yellow-500/15 text-yellow-400 font-medium uppercase tracking-wider shrink-0">Sub</span>
                         )}
                       </div>
-                      <div className="text-right shrink-0">
-                        <span className="text-xl font-black accent-text">{finalReps}</span>
-                        <p className="text-[9px] text-white/30">{ex.isTime ? 'sec' : 'reps'}</p>
-                      </div>
-                    </div>
-                    <div className="absolute top-1/2 -translate-y-1/2 right-3 opacity-30">
-                      <AlertCircle size={14} className="text-white" />
+                      <p className="text-[10px] text-white/40 mt-0.5 truncate">
+                        {ex.sets} séries · {Math.round(ex.intensityPct * 100)}% intensité
+                      </p>
                     </div>
                   </button>
                 )
@@ -140,7 +132,7 @@ export default function WorkoutPage() {
             <button
               id="start-session"
               onClick={() => setSessionActive(true)}
-              className="btn-primary flex items-center justify-center gap-2 mt-2 pulse-glow"
+              className="btn-primary flex items-center justify-center gap-2 mt-1 pulse-glow"
             >
               <Play size={16} fill="white" />
               Démarrer la séance
