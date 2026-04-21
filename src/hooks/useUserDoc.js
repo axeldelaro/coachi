@@ -26,6 +26,7 @@ const DEFAULT_DOC = {
   iaState: { cal_multiplier: 1.0, rep_multiplier: 1.0 },
   logs: { streak: 0, water: 0, lastLogDate: '', lastDebriefDate: '' },
   groceryPrefs: {},
+  chatHistory: [],
 }
 
 export default function useUserDoc() {
@@ -55,10 +56,11 @@ export default function useUserDoc() {
     await updateDoc(doc(db, 'users', user.uid), { [field]: value })
   }, [])
 
-  const updateProfile = useCallback((p) => updateField('profile', p), [updateField])
-  const updateIaState = useCallback((s) => updateField('iaState', s), [updateField])
-  const updateLogs    = useCallback((l) => updateField('logs', l), [updateField])
+  const updateProfile     = useCallback((p) => updateField('profile',     p), [updateField])
+  const updateIaState     = useCallback((s) => updateField('iaState',     s), [updateField])
+  const updateLogs        = useCallback((l) => updateField('logs',        l), [updateField])
   const updateGroceryPrefs = useCallback((g) => updateField('groceryPrefs', g), [updateField])
+  const updateChatHistory  = useCallback((h) => updateField('chatHistory',  h), [updateField])
 
-  return { data, loading, updateProfile, updateIaState, updateLogs, updateGroceryPrefs }
+  return { data, loading, updateProfile, updateIaState, updateLogs, updateGroceryPrefs, updateChatHistory }
 }
