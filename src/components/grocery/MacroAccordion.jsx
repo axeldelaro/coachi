@@ -10,7 +10,7 @@ const MACRO_COLORS = {
 }
 
 export default function MacroAccordion({ weight, calMultiplier, groceryPrefs, onSubstitute, strikethrough, onStrike }) {
-  const [open, setOpen] = useState(new Set(['Protéines']))
+  const [open, setOpen] = useState(new Set())
 
   const toggle = (macro) => {
     setOpen((prev) => {

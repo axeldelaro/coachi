@@ -5,38 +5,56 @@ import { groceries, resolveIngredient } from '../data/groceries'
 import { cookingMethods } from '../data/cookingMethods'
 import { ChevronDown, ChevronUp, FlameKindling } from 'lucide-react'
 
-function MealCard({ meal, profile, iaState, groceryPrefs, batchX3 }) {
-  const weight = profile?.weight ?? 75
+function MealCard({ meal, profile, iaState, groceryPrefs, batchX3, defaultOpen = false }) {
+  const [open, setOpen] = useState(defaultOpen)
+  const weight  = profile?.weight ?? 75
   const calMult = iaState?.cal_multiplier ?? 1.0
 
   return (
     <div className="glass rounded-2xl overflow-hidden">
-      <div className="px-4 py-3 border-b border-white/5 flex items-center gap-3">
-        <span className="text-xl">{meal.icon}</span>
+      {/* Clickable header */}
+      <button
+        onClick={() => setOpen(!open)}
+        className="w-full px-4 py-3.5 flex items-center gap-3 tap-scale text-left"
+      >
+        <span className="text-xl shrink-0">{meal.icon}</span>
         <div className="flex-1">
           <p className="text-[11px] text-white/30 uppercase tracking-widest">{meal.time}</p>
           <p className="text-base font-bold text-white">{meal.label}</p>
         </div>
-        {batchX3 && (
-          <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{ background: 'color-mix(in srgb, var(--accent) 20%, transparent)', color: 'var(--accent)' }}>
-            ×3J
-          </span>
-        )}
-      </div>
-      <div className="px-4 py-3 flex flex-col gap-2.5">
-        {meal.ingredients.map(({ ingredientId, portionMultiplier }) => {
-          const base = groceries.find((g) => g.id === ingredientId)
-          if (!base) return null
-          const resolved = resolveIngredient(base, groceryPrefs)
-          const qty = Math.round(resolved.baseQty * (weight / 63) * calMult * portionMultiplier * (batchX3 ? 3 : 1) * 10) / 10
-          return (
-            <div key={ingredientId} className="flex items-center justify-between">
-              <span className="text-sm text-white font-medium">{resolved.name}</span>
-              <span className="text-sm text-white/50 font-semibold">{qty} {resolved.unit}</span>
-            </div>
-          )
-        })}
-      </div>
+        <div className="flex items-center gap-2 shrink-0">
+          {batchX3 && (
+            <span
+              className="text-xs font-bold px-2 py-0.5 rounded-full"
+              style={{ background: 'color-mix(in srgb, var(--accent) 20%, transparent)', color: 'var(--accent)' }}
+            >
+              ×3J
+            </span>
+          )}
+          {open
+            ? <ChevronUp size={16} className="text-white/40" />
+            : <ChevronDown size={16} className="text-white/40" />
+          }
+        </div>
+      </button>
+
+      {/* Collapsible content */}
+      {open && (
+        <div className="border-t border-white/5 px-4 py-3 flex flex-col gap-2.5">
+          {meal.ingredients.map(({ ingredientId, portionMultiplier }) => {
+            const base = groceries.find((g) => g.id === ingredientId)
+            if (!base) return null
+            const resolved = resolveIngredient(base, groceryPrefs)
+            const qty = Math.round(resolved.baseQty * (weight / 63) * calMult * portionMultiplier * (batchX3 ? 3 : 1) * 10) / 10
+            return (
+              <div key={ingredientId} className="flex items-center justify-between">
+                <span className="text-sm text-white font-medium">{resolved.name}</span>
+                <span className="text-sm text-white/50 font-semibold">{qty} {resolved.unit}</span>
+              </div>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
@@ -44,7 +62,6 @@ function MealCard({ meal, profile, iaState, groceryPrefs, batchX3 }) {
 function CookingGuide({ groceryPrefs }) {
   const [open, setOpen] = useState(false)
 
-  // Find all active cooking methods in use
   const activeMethods = new Set()
   meals.forEach((meal) => {
     meal.ingredients.forEach((ing) => {
@@ -109,12 +126,12 @@ export default function DietPage() {
   const { profile, iaState, groceryPrefs } = data
 
   return (
-    <div className="px-4 py-5 pb-28 flex flex-col gap-4">
+    <div className="px-4 py-5 pb-28 flex flex-col gap-3">
       {/* Header */}
       <div className="flex items-start justify-between fade-up">
         <div>
           <h2 className="text-xl font-black text-white">Diète & Cuisson</h2>
-          <p className="text-xs text-white/30 mt-0.5">4 repas · fenêtre 12h–20h</p>
+          <p className="text-xs text-white/30 mt-0.5">4 repas · fenêtre 12h–20h · appuie pour voir</p>
         </div>
         <button
           id="batch-toggle"
@@ -128,7 +145,7 @@ export default function DietPage() {
         </button>
       </div>
 
-      {/* Meal cards */}
+      {/* Meal cards — first one open by default */}
       {meals.map((meal, i) => (
         <div key={meal.id} className="fade-up" style={{ animationDelay: `${i * 0.05}s` }}>
           <MealCard
@@ -137,6 +154,7 @@ export default function DietPage() {
             iaState={iaState}
             groceryPrefs={groceryPrefs}
             batchX3={batchX3}
+            defaultOpen={i === 0}
           />
         </div>
       ))}
