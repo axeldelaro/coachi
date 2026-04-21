@@ -5,8 +5,7 @@ import { groceries, resolveIngredient } from '../data/groceries'
 import { cookingMethods } from '../data/cookingMethods'
 import { ChevronDown, ChevronUp, FlameKindling } from 'lucide-react'
 
-function MealCard({ meal, profile, iaState, groceryPrefs, batchX3, defaultOpen = false }) {
-  const [open, setOpen] = useState(defaultOpen)
+function MealCard({ meal, profile, iaState, groceryPrefs, batchX3, isOpen, onToggle }) {
   const weight  = profile?.weight ?? 75
   const calMult = iaState?.cal_multiplier ?? 1.0
 
@@ -14,7 +13,7 @@ function MealCard({ meal, profile, iaState, groceryPrefs, batchX3, defaultOpen =
     <div className="glass rounded-2xl overflow-hidden">
       {/* Clickable header */}
       <button
-        onClick={() => setOpen(!open)}
+        onClick={onToggle}
         className="w-full px-4 py-3.5 flex items-center gap-3 tap-scale text-left"
       >
         <span className="text-xl shrink-0">{meal.icon}</span>
@@ -31,7 +30,7 @@ function MealCard({ meal, profile, iaState, groceryPrefs, batchX3, defaultOpen =
               ×3J
             </span>
           )}
-          {open
+          {isOpen
             ? <ChevronUp size={16} className="text-white/40" />
             : <ChevronDown size={16} className="text-white/40" />
           }
@@ -39,7 +38,7 @@ function MealCard({ meal, profile, iaState, groceryPrefs, batchX3, defaultOpen =
       </button>
 
       {/* Collapsible content */}
-      {open && (
+      {isOpen && (
         <div className="border-t border-white/5 px-4 py-3 flex flex-col gap-2.5">
           {meal.ingredients.map(({ ingredientId, portionMultiplier }) => {
             const base = groceries.find((g) => g.id === ingredientId)
@@ -59,9 +58,7 @@ function MealCard({ meal, profile, iaState, groceryPrefs, batchX3, defaultOpen =
   )
 }
 
-function CookingGuide({ groceryPrefs }) {
-  const [open, setOpen] = useState(false)
-
+function CookingGuide({ groceryPrefs, isOpen, onToggle }) {
   const activeMethods = new Set()
   meals.forEach((meal) => {
     meal.ingredients.forEach((ing) => {
@@ -79,7 +76,7 @@ function CookingGuide({ groceryPrefs }) {
     <div className="glass rounded-2xl overflow-hidden">
       <button
         id="cooking-guide-toggle"
-        onClick={() => setOpen(!open)}
+        onClick={onToggle}
         className="w-full flex items-center justify-between px-4 py-3.5 tap-scale"
       >
         <div className="flex items-center gap-2">
@@ -87,10 +84,10 @@ function CookingGuide({ groceryPrefs }) {
           <span className="text-sm font-bold text-white">Guide de Cuisson</span>
           <span className="text-xs text-white/30">{entries.length} méthodes</span>
         </div>
-        {open ? <ChevronUp size={16} className="text-white/40" /> : <ChevronDown size={16} className="text-white/40" />}
+        {isOpen ? <ChevronUp size={16} className="text-white/40" /> : <ChevronDown size={16} className="text-white/40" />}
       </button>
 
-      {open && (
+      {isOpen && (
         <div className="border-t border-white/5 px-4 py-4 flex flex-col gap-5">
           {entries.map((method) => (
             <div key={method.label}>
@@ -121,9 +118,12 @@ function CookingGuide({ groceryPrefs }) {
 export default function DietPage() {
   const { data } = useOutletContext()
   const [batchX3, setBatch] = useState(false)
+  const [expandedId, setExpandedId] = useState(null)
 
   if (!data) return null
   const { profile, iaState, groceryPrefs } = data
+
+  const handleToggle = (id) => setExpandedId(prev => prev === id ? null : id)
 
   return (
     <div className="px-4 py-3 pb-2 flex flex-col gap-3">
@@ -145,7 +145,7 @@ export default function DietPage() {
         </button>
       </div>
 
-      {/* Meal cards — first one open by default */}
+      {/* Meal cards */}
       {meals.map((meal, i) => (
         <div key={meal.id} className="fade-up" style={{ animationDelay: `${i * 0.05}s` }}>
           <MealCard
@@ -154,14 +154,19 @@ export default function DietPage() {
             iaState={iaState}
             groceryPrefs={groceryPrefs}
             batchX3={batchX3}
-            defaultOpen={i === 0}
+            isOpen={expandedId === meal.id}
+            onToggle={() => handleToggle(meal.id)}
           />
         </div>
       ))}
 
       {/* Cooking guide */}
       <div className="fade-up" style={{ animationDelay: '0.2s' }}>
-        <CookingGuide groceryPrefs={groceryPrefs} />
+        <CookingGuide 
+          groceryPrefs={groceryPrefs} 
+          isOpen={expandedId === 'guide'}
+          onToggle={() => handleToggle('guide')}
+        />
       </div>
     </div>
   )

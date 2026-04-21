@@ -38,9 +38,7 @@ export default function CoachPage() {
 
       <a
         href="https://gemini.google.com/app?hl=fr"
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={() => {
+        onClick={(e) => {
           const prompt = getCoachPrompt(profile, iaState, logs, groceryPrefs)
           navigator.clipboard.writeText(prompt)
           setCopied(true)

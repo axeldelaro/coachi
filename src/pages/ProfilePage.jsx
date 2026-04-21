@@ -71,21 +71,20 @@ function StepperRow({ id, label, value, min, max, step = 1, unit, onChange }) {
   )
 }
 
-function Section({ title, subtitle, children, defaultOpen = false }) {
-  const [open, setOpen] = useState(defaultOpen)
+function Section({ id, title, subtitle, children, isOpen, onToggle }) {
   return (
     <div className="glass rounded-2xl overflow-hidden fade-up">
       <button
-        onClick={() => setOpen(!open)}
+        onClick={onToggle}
         className="w-full flex items-center justify-between px-4 py-3.5 tap-scale"
       >
         <div>
           <p className="text-sm font-bold text-white text-left">{title}</p>
           {subtitle && <p className="text-[10px] text-white/30 mt-0.5 text-left">{subtitle}</p>}
         </div>
-        {open ? <ChevronUp size={16} className="text-white/40 shrink-0" /> : <ChevronDown size={16} className="text-white/40 shrink-0" />}
+        {isOpen ? <ChevronUp size={16} className="text-white/40 shrink-0" /> : <ChevronDown size={16} className="text-white/40 shrink-0" />}
       </button>
-      {open && (
+      {isOpen && (
         <div className="border-t border-white/5 px-4 py-4">
           {children}
         </div>
@@ -103,6 +102,7 @@ export default function ProfilePage() {
   const profile = data?.profile
   const [name, setName] = useState('')
   const nameInit = useRef(false)
+  const [expandedSection, setExpandedSection] = useState(null)
 
   useEffect(() => {
     if (profile && !nameInit.current) {
@@ -128,6 +128,8 @@ export default function ProfilePage() {
     setAccent(val)
     updateProfile({ ...profile, theme: val })
   }
+  
+  const handleToggle = (id) => setExpandedSection(prev => prev === id ? null : id)
 
   if (!profile) return null
 
@@ -138,8 +140,12 @@ export default function ProfilePage() {
         <p className="text-xs text-white/30 mt-0.5">Appuie sur une section pour la modifier</p>
       </div>
 
-      {/* Identity — open by default */}
-      <Section title="👤 Identité" defaultOpen={true}>
+      <Section 
+        id="identity" 
+        title="👤 Identité" 
+        isOpen={expandedSection === 'identity'} 
+        onToggle={() => handleToggle('identity')}
+      >
         <input
           id="profile-name"
           type="text"
@@ -150,8 +156,13 @@ export default function ProfilePage() {
         />
       </Section>
 
-      {/* Body metrics */}
-      <Section title="⚖️ Corps" subtitle={`${profile.weight} kg`}>
+      <Section 
+        id="body" 
+        title="⚖️ Corps" 
+        subtitle={`${profile.weight} kg`}
+        isOpen={expandedSection === 'body'} 
+        onToggle={() => handleToggle('body')}
+      >
         <StepperRow
           id="profile-weight"
           label="Poids Actuel"
@@ -161,10 +172,12 @@ export default function ProfilePage() {
         />
       </Section>
 
-      {/* Performance maxes */}
       <Section
+        id="maxes"
         title="💪 Maxima d'exercices"
         subtitle={`${profile.maxPullups} tr · ${profile.maxPushups} po · ${profile.maxDips} di`}
+        isOpen={expandedSection === 'maxes'} 
+        onToggle={() => handleToggle('maxes')}
       >
         <div className="flex flex-col">
           <StepperRow id="profile-pullups" label="Tractions Poids de corps" value={profile.maxPullups} min={0} max={50} unit="reps" onChange={(v) => handleUpdate('maxPullups', v)} />
@@ -175,10 +188,12 @@ export default function ProfilePage() {
         <p className="text-[10px] text-white/20 mt-3">Mets à jour après chaque test — les séances s'ajustent automatiquement</p>
       </Section>
 
-      {/* Equipment */}
       <Section
+        id="equip"
         title="🏗️ Équipement"
         subtitle={`${Object.values(profile.equip).filter(Boolean).length} items actifs`}
+        isOpen={expandedSection === 'equip'} 
+        onToggle={() => handleToggle('equip')}
       >
         <div className="divide-y divide-white/5">
           {EQUIP_LIST.map(({ key, icon, label, desc }) => (
@@ -194,8 +209,13 @@ export default function ProfilePage() {
         </div>
       </Section>
 
-      {/* Accent color */}
-      <Section title="🎨 Couleur d'accent" subtitle={accent}>
+      <Section 
+        id="theme" 
+        title="🎨 Couleur d'accent" 
+        subtitle={accent}
+        isOpen={expandedSection === 'theme'} 
+        onToggle={() => handleToggle('theme')}
+      >
         <div className="grid grid-cols-6 gap-2">
           {ACCENT_PRESETS.map(({ label, value }) => (
             <button
@@ -214,7 +234,6 @@ export default function ProfilePage() {
         </div>
       </Section>
 
-      {/* Logout */}
       <button
         id="logout-btn"
         onClick={() => signOut(auth)}
