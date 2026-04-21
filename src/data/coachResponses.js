@@ -3,6 +3,31 @@ import { groceries } from './groceries'
 
 let genAI = null
 
+// ── Model fallback chain (best → fastest, Pro account) ───────────────────────
+const MODEL_CHAIN = [
+  'gemini-3.0-flash',       // Primary — Gemini 3 (if available/preview)
+  'gemini-2.5-pro',         // High quality Pro model
+  'gemini-2.5-flash',       // Fast & smart
+  'gemini-2.5-flash-lite',  // Lighter limits
+  'gemini-1.5-flash',       // Ultimate fallback
+]
+
+// Errors that should trigger a model switch (rate limit / quota / unavailable)
+const isRetryableError = (err) => {
+  const msg = err?.message?.toLowerCase() ?? ''
+  const status = err?.status ?? err?.code ?? 0
+  return (
+    status === 429 ||
+    status === 503 ||
+    msg.includes('429') ||
+    msg.includes('quota') ||
+    msg.includes('rate') ||
+    msg.includes('resource_exhausted') ||
+    msg.includes('overloaded') ||
+    msg.includes('unavailable') ||
+    msg.includes('model') && msg.includes('not found')
+  )
+}
 // ── Lazy init ────────────────────────────────────────────────────────────────
 function getGenAI() {
   if (!genAI) {
@@ -13,7 +38,6 @@ function getGenAI() {
   return genAI
 }
 
-// ── Build compact grocery context for system prompt ──────────────────────────
 function buildGroceryContext(groceryPrefs = {}) {
   return groceries.map(item => {
     const activeSubId  = groceryPrefs[item.id]
@@ -170,41 +194,62 @@ OUTILS DISPONIBLES — Utilise-les PROACTIVEMENT :
 
 STYLE : Direct, motivant, tutoiement OBLIGATOIRE. Réponses courtes. Réponds à TOUT. Ne te présente pas comme une IA.`
 
-  try {
-    const model = ai.getGenerativeModel({
-      model: 'gemini-2.5-flash-lite',
-      systemInstruction: { parts: [{ text: systemText }] },
-      tools: COACH_TOOLS,
-    })
-
-    // Build history — must start with 'user'
-    const raw = chatHistory.map(m => ({ role: m.role === 'coach' ? 'model' : 'user', parts: [{ text: m.text }] }))
-    let i = 0
-    while (i < raw.length && raw[i].role === 'model') i++
-    const history = raw.slice(i)
-
-    const chat   = model.startChat({ history })
-    const result = await chat.sendMessage(input)
-    const resp   = result.response
-
-    const calls   = resp.functionCalls?.() ?? []
-    const actions = []
-
-    if (calls.length > 0) {
-      const funcResponses = calls.map(call => {
-        actions.push({ name: call.name, args: call.args })
-        return { functionResponse: { name: call.name, response: { success: true } } }
+  // Try each model in the fallback chain
+  for (let i = 0; i < MODEL_CHAIN.length; i++) {
+    const modelName = MODEL_CHAIN[i]
+    try {
+      const model = ai.getGenerativeModel({
+        model: modelName,
+        systemInstruction: { parts: [{ text: systemText }] },
+        tools: COACH_TOOLS,
       })
-      const final = await chat.sendMessage(funcResponses)
-      return { text: final.response.text(), actions }
-    }
 
-    return { text: resp.text(), actions: [] }
-  } catch (err) {
-    console.error('Erreur Gemini:', err)
-    return {
-      text: `Oups, une défaillance technique (${err.message?.substring(0, 60) ?? 'Erreur'}). Réessaie.`,
-      actions: [],
+      // Build history — must start with 'user'
+      const raw = chatHistory.map(m => ({ role: m.role === 'coach' ? 'model' : 'user', parts: [{ text: m.text }] }))
+      let j = 0
+      while (j < raw.length && raw[j].role === 'model') j++
+      const history = raw.slice(j)
+
+      const chat   = model.startChat({ history })
+      const result = await chat.sendMessage(input)
+      const resp   = result.response
+
+      const calls   = resp.functionCalls?.() ?? []
+      const actions = []
+
+      if (calls.length > 0) {
+        const funcResponses = calls.map(call => {
+          actions.push({ name: call.name, args: call.args })
+          return { functionResponse: { name: call.name, response: { success: true } } }
+        })
+        const final = await chat.sendMessage(funcResponses)
+        return { text: final.response.text(), actions }
+      }
+
+      return { text: resp.text(), actions: [] }
+
+    } catch (err) {
+      const retryable = isRetryableError(err)
+      console.warn(`[Coach] Model ${modelName} failed (retryable=${retryable}):`, err?.message ?? err)
+
+      // If last model in chain, return error message
+      if (i === MODEL_CHAIN.length - 1) {
+        console.error('[Coach] All models exhausted:', err)
+        return {
+          text: `Tous les modèles IA sont temporairement surchargés. Réessaie dans quelques instants.`,
+          actions: [],
+        }
+      }
+
+      // Only switch model if retryable, otherwise propagate
+      if (!retryable) {
+        console.error('[Coach] Non-retryable error:', err)
+        return {
+          text: `Oups, une défaillance technique (${err.message?.substring(0, 60) ?? 'Erreur'}). Réessaie.`,
+          actions: [],
+        }
+      }
+      // else: loop continues with next model
     }
   }
 }
