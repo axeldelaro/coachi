@@ -5,10 +5,7 @@ let genAI = null
 
 // ── Model fallback chain (best → fastest, Pro account) ───────────────────────
 const MODEL_CHAIN = [
-  'gemini-3.0-flash',       // Primary — Gemini 3 (if available/preview)
-  'gemini-2.5-pro',         // High quality Pro model
-  'gemini-2.5-flash',       // Fast & smart
-  'gemini-2.5-flash-lite',  // Lighter limits
+  'gemini-2.5-flash-lite',  // Primary — Fast & light
   'gemini-1.5-flash',       // Ultimate fallback
 ]
 
