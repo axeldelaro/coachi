@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { Send } from 'lucide-react'
 import { getCoachResponse } from '../data/coachResponses'
-import useUserDoc from '../hooks/useUserDoc'
 
 const MAX_HISTORY = 60 // messages kept in Firebase (30 exchanges)
 
@@ -103,8 +102,7 @@ function TypingIndicator() {
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function CoachPage() {
-  const { data }                                          = useOutletContext()
-  const { updateProfile, updateIaState, updateLogs, updateChatHistory, updateGroceryPrefs } = useUserDoc()
+  const { data, updateProfile, updateIaState, updateLogs, updateChatHistory, updateGroceryPrefs } = useOutletContext()
 
   const profile      = data?.profile
   const iaState      = data?.iaState

@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 import { useEffect } from 'react'
 import Header from './Header'
 import BottomNav from './BottomNav'
@@ -6,7 +6,7 @@ import useUserDoc from '../../hooks/useUserDoc'
 import { useTheme } from '../../context/ThemeContext'
 
 export default function AppShell() {
-  const { data } = useUserDoc()
+  const { data, updateProfile, updateIaState, updateLogs, updateGroceryPrefs, updateChatHistory } = useUserDoc()
   const { applyAccent } = useTheme()
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export default function AppShell() {
     <div className="flex flex-col bg-[#050505]" style={{ height: '100dvh', overflow: 'hidden' }}>
       <Header data={data} />
       <main className="flex-1 scroll-area">
-        <Outlet context={{ data }} />
+        <Outlet context={{ data, updateProfile, updateIaState, updateLogs, updateGroceryPrefs, updateChatHistory }} />
       </main>
       <BottomNav />
     </div>

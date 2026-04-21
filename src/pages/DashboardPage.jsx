@@ -1,6 +1,5 @@
 import { useOutletContext } from 'react-router-dom'
-import { useEffect, useRef, useState } from 'react'
-import useUserDoc from '../hooks/useUserDoc'
+import { useEffect, useState } from 'react'
 import MetabolicClock from '../components/dashboard/MetabolicClock'
 import WaterTracker from '../components/dashboard/WaterTracker'
 import EveningDebrief from '../components/dashboard/EveningDebrief'
@@ -10,8 +9,7 @@ function todayStr() {
 }
 
 export default function DashboardPage() {
-  const { data } = useOutletContext()
-  const { updateLogs, updateIaState } = useUserDoc()
+  const { data, updateLogs, updateIaState } = useOutletContext()
   const [clock, setClock] = useState(new Date())
 
   // Refresh clock every minute

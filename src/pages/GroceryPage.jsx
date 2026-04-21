@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useOutletContext } from 'react-router-dom'
-import useUserDoc from '../hooks/useUserDoc'
 import MacroAccordion from '../components/grocery/MacroAccordion'
 import { X, Check, ChevronDown, ChevronUp, RefreshCw, Sparkles } from 'lucide-react'
 import { calcQty, groceries, resolveIngredient } from '../data/groceries'
@@ -188,8 +187,7 @@ function RecipesSection({ groceryPrefs }) {
 
 // ─── Main page ────────────────────────────────────────────────────────────────
 export default function GroceryPage() {
-  const { data } = useOutletContext()
-  const { updateGroceryPrefs } = useUserDoc()
+  const { data, updateGroceryPrefs } = useOutletContext()
   const [subModal, setSubModal]   = useState(null)
   const [strikethrough, setStrike] = useState(new Set())
 

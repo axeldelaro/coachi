@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from 'react'
 import { useOutletContext } from 'react-router-dom'
 import { signOut } from 'firebase/auth'
 import { auth } from '../firebase'
-import useUserDoc from '../hooks/useUserDoc'
 import { useTheme } from '../context/ThemeContext'
 import { LogOut, Plus, Minus, ChevronDown, ChevronUp } from 'lucide-react'
 
@@ -98,9 +97,8 @@ function Section({ title, subtitle, children, defaultOpen = false }) {
 // ─── Main page ─────────────────────────────────────────────────────────────────
 
 export default function ProfilePage() {
-  const { data }              = useOutletContext()
-  const { updateProfile }     = useUserDoc()
-  const { setAccent, accent } = useTheme()
+  const { data, updateProfile }  = useOutletContext()
+  const { setAccent, accent }     = useTheme()
 
   const profile = data?.profile
   const [name, setName] = useState('')
