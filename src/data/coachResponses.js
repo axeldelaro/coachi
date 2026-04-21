@@ -1,12 +1,17 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
 // Initialize Gemini API
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY
-const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null
+// We move it inside the function or make it lazy to ensure it picks up the env var correctly
+let genAI = null
 
 export async function getCoachResponse(input, profile, iaState, logs, chatHistory = []) {
   if (!genAI) {
-    return "Erreur : Clé API Gemini manquante. Ajoute VITE_GEMINI_API_KEY dans ton fichier .env"
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY
+    if (!apiKey) {
+      console.error("VITE_GEMINI_API_KEY is missing")
+      return "Erreur : Clé API Gemini manquante dans le fichier .env"
+    }
+    genAI = new GoogleGenerativeAI(apiKey)
   }
 
   const name = profile?.name || 'champion'
@@ -36,7 +41,7 @@ export async function getCoachResponse(input, profile, iaState, logs, chatHistor
     .map(([key]) => equipMap[key])
     .join(', ') || 'Poids du corps uniquement (aucun équipement)'
 
-  const systemInstruction = `Tu es le "Coach IA" de l'application fitness "Protocol Écorché".
+  const systemInstructionText = `Tu es le "Coach IA" de l'application fitness "Protocol Écorché".
 Ton rôle est d'être un coach sportif expert en calisthenics (poids du corps), musculation et nutrition.
 L'utilisateur avec qui tu parles s'appelle ${name}.
 
@@ -62,25 +67,35 @@ Directives de personnalité et de style :
   try {
     const model = genAI.getGenerativeModel({
       model: "gemini-1.5-flash",
-      systemInstruction,
+      systemInstruction: {
+        parts: [{ text: systemInstructionText }]
+      },
     })
 
     // Format history for Gemini (roles must be 'user' or 'model')
-    // We skip the very first welcome message if we want, but it's fine to include it.
+    // IMPORTANT: History must alternate user/model/user/model
     const formattedHistory = chatHistory.map(msg => ({
       role: msg.role === 'coach' ? 'model' : 'user',
       parts: [{ text: msg.text }]
     }))
 
+    // Clean history to ensure alternation (safety check)
+    const cleanedHistory = []
+    formattedHistory.forEach((msg, i) => {
+      if (i === 0 || msg.role !== cleanedHistory[cleanedHistory.length - 1].role) {
+        cleanedHistory.push(msg)
+      }
+    })
+
     const chat = model.startChat({
-      history: formattedHistory,
+      history: cleanedHistory,
     })
 
     const result = await chat.sendMessage(input)
     return result.response.text()
   } catch (error) {
-    console.error("Erreur Gemini :", error)
-    return "Il y a eu un bug dans mon système de réponse (erreur API). Réessaie ou vérifie ta connexion internet et ta clé API."
+    console.error("Erreur Gemini détaillée:", error)
+    return `Oups, j'ai eu une petite défaillance technique. (Détail: ${error.message || 'Erreur inconnue'}). Réessaie dans quelques secondes, champion.`
   }
 }
 
