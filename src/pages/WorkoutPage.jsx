@@ -3,10 +3,10 @@ import { useOutletContext } from 'react-router-dom'
 import { program, calcReps } from '../data/program'
 import ActiveSession from '../components/workout/ActiveSession'
 import ExerciseModal from '../components/workout/ExerciseModal'
-import { Play, Moon, AlertCircle } from 'lucide-react'
+import { Play, Moon, AlertCircle, ChevronUp, ChevronDown } from 'lucide-react'
 
 export default function WorkoutPage() {
-  const { data } = useOutletContext()
+  const { data, updateProfile } = useOutletContext()
   const [selectedDay, setSelectedDay] = useState(new Date().getDay() === 0 ? 6 : new Date().getDay() - 1)
   const [sessionActive, setSessionActive] = useState(false)
   const [selectedExercise, setSelectedExercise] = useState(null)
@@ -25,7 +25,38 @@ export default function WorkoutPage() {
     }
     return ex
   })
-  const resolvedDay = { ...day, exercises: resolvedExercises }
+
+  // Apply custom ordering
+  const customOrder = profile?.customWorkoutOrder?.[selectedDay] || []
+  const orderedExercises = [...resolvedExercises].sort((a, b) => {
+    const idxA = customOrder.indexOf(a.id)
+    const idxB = customOrder.indexOf(b.id)
+    if (idxA !== -1 && idxB !== -1) return idxA - idxB
+    if (idxA !== -1) return -1
+    if (idxB !== -1) return 1
+    return 0
+  })
+
+  const resolvedDay = { ...day, exercises: orderedExercises }
+
+  const moveExercise = async (index, direction) => {
+    const newIndex = index + direction
+    if (newIndex < 0 || newIndex >= orderedExercises.length) return
+    
+    const currentOrder = orderedExercises.map(e => e.id)
+    const temp = currentOrder[index]
+    currentOrder[index] = currentOrder[newIndex]
+    currentOrder[newIndex] = temp
+    
+    await updateProfile({
+      ...profile,
+      customWorkoutOrder: {
+        ...(profile.customWorkoutOrder || {}),
+        [selectedDay]: currentOrder
+      }
+    })
+    navigator.vibrate?.(20)
+  }
 
   return (
     <>
@@ -95,37 +126,67 @@ export default function WorkoutPage() {
           </div>
         ) : (
           <>
-            {/* Exercise list */}
-            <div className="flex flex-col gap-2">
-              {resolvedExercises.map((ex, i) => {
-                const reps = calcReps(ex, profile)
-                const finalReps = Math.max(1, Math.round(reps * repMult))
-                return (
-                  <button 
-                    key={ex.id} 
-                    onClick={() => setSelectedExercise(ex)}
-                    className="glass rounded-xl p-3 fade-up text-left tap-scale transition-all w-full flex items-center gap-3" 
-                    style={{ animationDelay: `${0.12 + i * 0.04}s` }}
-                  >
-                    <div className="w-10 h-10 rounded-lg bg-white/5 flex flex-col items-center justify-center shrink-0">
-                      <span className="text-sm font-black accent-text leading-none">{finalReps}</span>
-                      <span className="text-[8px] text-white/40 uppercase tracking-widest mt-0.5">{ex.isTime ? 'sec' : 'reps'}</span>
-                    </div>
+            {/* Exercise Table */}
+            <div className="glass rounded-2xl overflow-hidden fade-up">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  <tr className="border-b border-white/5 bg-white/5">
+                    <th className="py-3 px-2 text-[10px] text-white/30 uppercase tracking-widest font-semibold w-10 text-center">Ordre</th>
+                    <th className="py-3 px-3 text-[10px] text-white/30 uppercase tracking-widest font-semibold">Exercice</th>
+                    <th className="py-3 px-4 text-[10px] text-white/30 uppercase tracking-widest font-semibold text-right">Reps</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orderedExercises.map((ex, i) => {
+                    const reps = calcReps(ex, profile)
+                    const finalReps = Math.max(1, Math.round(reps * repMult))
                     
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-bold text-white truncate">{ex.name}</p>
-                        {ex.equipment && !equip[ex.equipment] && (
-                          <span className="text-[8px] px-1.5 py-0.5 rounded bg-yellow-500/15 text-yellow-400 font-medium uppercase tracking-wider shrink-0">Sub</span>
-                        )}
-                      </div>
-                      <p className="text-[10px] text-white/40 mt-0.5 truncate">
-                        {ex.sets} séries · {Math.round(ex.intensityPct * 100)}% intensité
-                      </p>
-                    </div>
-                  </button>
-                )
-              })}
+                    return (
+                      <tr key={ex.id} className="border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors">
+                        <td className="py-2 px-1 align-middle text-center w-10">
+                          <div className="flex flex-col items-center gap-0.5">
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); moveExercise(i, -1); }} 
+                              disabled={i === 0}
+                              className="p-1 text-white/30 hover:text-white disabled:opacity-10 tap-scale transition-colors"
+                            >
+                              <ChevronUp size={16} />
+                            </button>
+                            <button 
+                              onClick={(e) => { e.stopPropagation(); moveExercise(i, 1); }} 
+                              disabled={i === orderedExercises.length - 1}
+                              className="p-1 text-white/30 hover:text-white disabled:opacity-10 tap-scale transition-colors"
+                            >
+                              <ChevronDown size={16} />
+                            </button>
+                          </div>
+                        </td>
+                        <td 
+                          className="py-3 px-2 align-middle tap-scale cursor-pointer"
+                          onClick={() => setSelectedExercise(ex)}
+                        >
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-bold text-white leading-tight">{ex.name}</p>
+                            {ex.equipment && !equip[ex.equipment] && (
+                              <span className="text-[8px] px-1.5 py-0.5 rounded bg-yellow-500/15 text-yellow-400 font-medium uppercase tracking-wider shrink-0">Sub</span>
+                            )}
+                          </div>
+                          <p className="text-[10px] text-white/40 mt-1">
+                            {ex.sets} séries · {Math.round(ex.intensityPct * 100)}%
+                          </p>
+                        </td>
+                        <td 
+                          className="py-3 px-4 align-middle text-right tap-scale cursor-pointer"
+                          onClick={() => setSelectedExercise(ex)}
+                        >
+                          <span className="text-base font-black accent-text block leading-none">{finalReps}</span>
+                          <span className="text-[8px] text-white/40 uppercase tracking-widest block mt-1">{ex.isTime ? 'sec' : 'reps'}</span>
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
             </div>
 
             {/* Start session CTA */}
