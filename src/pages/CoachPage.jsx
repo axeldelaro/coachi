@@ -36,22 +36,33 @@ export default function CoachPage() {
         </p>
       </div>
 
-      <a
-        href="https://gemini.google.com/app?hl=fr"
-        onClick={(e) => {
-          const prompt = getCoachPrompt(profile, iaState, logs, groceryPrefs)
-          navigator.clipboard.writeText(prompt)
-          setCopied(true)
-          navigator.vibrate?.(50)
-          setTimeout(() => setCopied(false), 3000)
-        }}
-        className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl text-white font-bold text-base tap-scale transition-all"
-        style={{ background: copied ? '#22c55e' : 'linear-gradient(135deg, var(--accent), #7c1010)' }}
-      >
-        {copied ? <Check size={20} /> : <Copy size={20} />}
-        {copied ? 'Copié & Ouverture...' : 'Copier & Ouvrir Gemini'}
-        {!copied && <ExternalLink size={16} className="text-white/50" />}
-      </a>
+      {!copied ? (
+        <button
+          onClick={() => {
+            const prompt = getCoachPrompt(profile, iaState, logs, groceryPrefs)
+            navigator.clipboard.writeText(prompt).catch(console.error)
+            setCopied(true)
+            navigator.vibrate?.(50)
+          }}
+          className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl text-white font-bold text-base tap-scale transition-all"
+          style={{ background: 'linear-gradient(135deg, var(--accent), #7c1010)' }}
+        >
+          <Copy size={20} />
+          Générer & Copier mes données
+        </button>
+      ) : (
+        <a
+          href="https://gemini.google.com/app?hl=fr"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl text-white font-bold text-base tap-scale transition-all"
+          style={{ background: '#22c55e' }}
+        >
+          <Check size={20} />
+          Copié ! Ouvrir Gemini
+          <ExternalLink size={16} className="text-white/50" />
+        </a>
+      )}
 
       <div className="glass px-4 py-4 rounded-2xl border border-white/5 mt-4 text-left w-full">
         <p className="text-[10px] uppercase tracking-widest text-white/30 font-semibold mb-2">Comment ça marche ?</p>
