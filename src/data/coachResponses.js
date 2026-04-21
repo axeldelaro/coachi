@@ -73,19 +73,19 @@ Directives de personnalité et de style :
     })
 
     // Format history for Gemini (roles must be 'user' or 'model')
-    // IMPORTANT: History must alternate user/model/user/model
-    const formattedHistory = chatHistory.map(msg => ({
+    // CRITICAL: Gemini requires the history to START with a 'user' message.
+    // We skip all leading 'coach' (model) messages like the welcome message.
+    const rawHistory = chatHistory.map(msg => ({
       role: msg.role === 'coach' ? 'model' : 'user',
       parts: [{ text: msg.text }]
     }))
 
-    // Clean history to ensure alternation (safety check)
-    const cleanedHistory = []
-    formattedHistory.forEach((msg, i) => {
-      if (i === 0 || msg.role !== cleanedHistory[cleanedHistory.length - 1].role) {
-        cleanedHistory.push(msg)
-      }
-    })
+    // Drop all leading 'model' messages
+    let startIdx = 0
+    while (startIdx < rawHistory.length && rawHistory[startIdx].role === 'model') {
+      startIdx++
+    }
+    const cleanedHistory = rawHistory.slice(startIdx)
 
     const chat = model.startChat({
       history: cleanedHistory,
