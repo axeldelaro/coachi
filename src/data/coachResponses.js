@@ -6,7 +6,6 @@ let genAI = null
 // ── Model fallback chain (best → fastest, Pro account) ───────────────────────
 const MODEL_CHAIN = [
   'gemini-2.5-flash-lite',  // Primary — Fast & light
-  'gemini-1.5-flash',       // Ultimate fallback
 ]
 
 // Errors that should trigger a model switch
