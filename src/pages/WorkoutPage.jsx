@@ -12,6 +12,7 @@ export default function WorkoutPage() {
   const [selectedDay, setSelectedDay] = useState(new Date().getDay() === 0 ? 6 : new Date().getDay() - 1)
   const [sessionActive, setSessionActive] = useState(false)
   const [selectedExercise, setSelectedExercise] = useState(null)
+  const [expandedCats, setExpandedCats] = useState(['push', 'pull', 'core', 'legs', 'cardio'])
 
   if (!data) return null
 
@@ -73,6 +74,12 @@ export default function WorkoutPage() {
     }
     await updateProfile({ ...profile, activeExercises: newActive })
     navigator.vibrate?.(10)
+  }
+
+  const toggleCat = (id) => {
+    setExpandedCats(prev => 
+      prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
+    )
   }
 
   const categories = [
@@ -257,40 +264,49 @@ export default function WorkoutPage() {
               {categories.map(cat => {
                 const catEx = exerciseLibrary.filter(e => e.category === cat.id)
                 if (catEx.length === 0) return null
+                const isExpanded = expandedCats.includes(cat.id)
                 
                 return (
                   <div key={cat.id} className="glass rounded-xl overflow-hidden">
-                    <div className={`px-3 py-2 border-b border-white/5 ${cat.bg}`}>
+                    <button 
+                      onClick={() => toggleCat(cat.id)}
+                      className={`w-full px-3 py-2 flex items-center justify-between transition-colors ${cat.bg} ${isExpanded ? 'border-b border-white/5' : ''}`}
+                    >
                       <h3 className={`text-[11px] font-bold uppercase tracking-wider ${cat.color}`}>{cat.label}</h3>
-                    </div>
-                    <div className="flex flex-col">
-                      {catEx.map(ex => {
-                        const isActive = activeIds.includes(ex.id)
-                        return (
-                          <button
-                            key={ex.id}
-                            onClick={() => toggleExercise(ex.id)}
-                            className="flex items-center gap-2.5 px-3 py-2.5 border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors tap-scale text-left w-full"
-                          >
-                            <div className="shrink-0 transition-colors">
-                              {isActive ? (
-                                <CheckCircle2 size={16} className="text-white" />
-                              ) : (
-                                <Circle size={16} className="text-white/20" />
-                              )}
+                      <ChevronDown size={14} className={`text-white/50 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                    </button>
+                    {isExpanded && (
+                      <div className="flex flex-col">
+                        {catEx.map(ex => {
+                          const isActive = activeIds.includes(ex.id)
+                          return (
+                            <div key={ex.id} className="flex items-center px-3 py-2.5 border-b border-white/5 last:border-0 hover:bg-white/5 transition-colors text-left w-full">
+                              <button
+                                onClick={() => toggleExercise(ex.id)}
+                                className="shrink-0 p-1 mr-2 tap-scale transition-colors"
+                              >
+                                {isActive ? (
+                                  <CheckCircle2 size={16} className="text-white" />
+                                ) : (
+                                  <Circle size={16} className="text-white/20" />
+                                )}
+                              </button>
+                              <button
+                                onClick={() => setSelectedExercise(ex)}
+                                className="flex-1 min-w-0 text-left tap-scale"
+                              >
+                                <p className={`text-[13px] font-bold truncate transition-colors ${isActive ? 'text-white' : 'text-white/40'}`}>
+                                  {ex.name}
+                                </p>
+                                <p className="text-[9px] text-white/30 truncate mt-0.5">
+                                  {ex.target}
+                                </p>
+                              </button>
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <p className={`text-[13px] font-bold truncate transition-colors ${isActive ? 'text-white' : 'text-white/40'}`}>
-                                {ex.name}
-                              </p>
-                              <p className="text-[9px] text-white/30 truncate mt-0.5">
-                                {ex.target}
-                              </p>
-                            </div>
-                          </button>
-                        )
-                      })}
-                    </div>
+                          )
+                        })}
+                      </div>
+                    )}
                   </div>
                 )
               })}
