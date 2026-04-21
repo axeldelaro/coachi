@@ -1,156 +1,61 @@
-// Weekly calisthenics programme — Mon(0) to Sun(6)
-// Equipment keys: pullupBar, dipBars, rings, parallettes, kettlebell, jumpRope, vest, abWheel
+import { exerciseLibrary, defaultActiveIds } from './exerciseLibrary'
 
-export const program = [
-  {
-    day: 0, label: 'Lun', type: 'Push 💪',
-    exercises: [
-      { id: 'pushup',       name: 'Pompes Classiques', sets: 4, intensityPct: 0.75, maxKey: 'maxPushups', equipment: null,
-        target: 'Pectoraux, Triceps, Avant des Épaules',
-        execution: 'Place tes mains largeur d\'épaules. Descend en contrôlant jusqu\'à ce que ta poitrine frôle le sol, puis pousse fort pour remonter.',
-        cues: ['Garde le corps aligné (gainage)', 'Coudes rentrés à 45°', 'Expire à la montée'] },
-      { id: 'dip',          name: 'Dips aux Barres', sets: 3, intensityPct: 0.70, maxKey: 'maxDips', equipment: 'dipBars',
-        target: 'Triceps, Bas des Pectoraux',
-        execution: 'En appui sur les barres, plie les coudes pour descendre jusqu\'à ce que tes épaules soient sous la ligne de tes coudes.',
-        substitute: { name: 'Dips sur Chaise', target: 'Triceps', execution: 'Mains sur le bord d\'une chaise, descends les fesses dans le vide en pliant les coudes.', cues: ['Dos proche de la chaise', 'Ne pas écarter les coudes'] },
-        cues: ['Penche-toi en avant pour cibler les pecs', 'Reste droit pour les triceps'] },
-      { id: 'ring_pushup',  name: 'Pompes sur Anneaux', sets: 3, intensityPct: 0.60, maxKey: 'maxPushups', equipment: 'rings',
-        target: 'Pectoraux (Instabilité), Triceps',
-        execution: 'Saisis les anneaux et effectue une pompe. L\'instabilité recrute davantage les muscles stabilisateurs.',
-        substitute: { name: 'Pompes Déclinées (Pieds surélevés)', target: 'Haut des Pectoraux', execution: 'Pieds sur une chaise ou un canapé, effectue des pompes classiques.', cues: ['Ne pas creuser le bas du dos'] },
-        cues: ['Garde les anneaux stables', 'Tourne les poignets vers l\'extérieur en haut'] },
-      { id: 'pike_pushup',  name: 'Pompes Piquées (Pike)', sets: 3, intensityPct: 0.65, maxKey: 'maxPushups', equipment: null,
-        target: 'Épaules (Faisceau antérieur)',
-        execution: 'Position de chien tête en bas (V inversé). Plie les coudes pour amener le sommet de la tête vers le sol, juste devant tes mains.',
-        cues: ['Garde les hanches très hautes', 'Regarde tes pieds'] },
-      { id: 'diamond_pu',   name: 'Pompes Diamant', sets: 3, intensityPct: 0.55, maxKey: 'maxPushups', equipment: null,
-        target: 'Triceps, Intérieur des Pectoraux',
-        execution: 'Mains jointes sous la poitrine (pouces et index forment un diamant). Descend jusqu\'à toucher tes mains avec ta poitrine.',
-        cues: ['Garde les coudes le long du corps', 'Mouvement très contrôlé'] },
-    ],
-  },
-  {
-    day: 1, label: 'Mar', type: 'Pull 🔥',
-    exercises: [
-      { id: 'pullup',       name: 'Tractions Pronation', sets: 4, intensityPct: 0.75, maxKey: 'maxPullups', equipment: 'pullupBar',
-        target: 'Grand Dorsal, Biceps',
-        execution: 'Saisis la barre (paumes vers l\'avant). Tire jusqu\'à passer le menton au-dessus de la barre.',
-        substitute: { name: 'Tirage Inversé (sous Table)', target: 'Dos', execution: 'Allongé sous une table solide, tire ta poitrine vers le bord de la table.', cues: ['Corps aligné', 'Serrer les omoplates'] },
-        cues: ['Tire les coudes vers le bas et l\'arrière', 'Pas de balancement'] },
-      { id: 'ring_row',     name: 'Tirage Horizontal (Anneaux)', sets: 3, intensityPct: 0.70, maxKey: 'maxPullups', equipment: 'rings',
-        target: 'Épaisseur du Dos, Rhomboïdes',
-        execution: 'Penche-toi en arrière et tire ton corps vers les anneaux.',
-        substitute: { name: 'Tractions Prise Large', target: 'Grand Dorsal', execution: 'Prise très large sur la barre pour cibler l\'extérieur du dos.', cues: ['Monter la poitrine vers la barre'] },
-        cues: ['Plus tu es horizontal, plus c\'est dur', 'Pause de 1s en haut'] },
-      { id: 'chin_up',      name: 'Tractions Supination (Chin-ups)', sets: 3, intensityPct: 0.65, maxKey: 'maxPullups', equipment: 'pullupBar',
-        target: 'Biceps, Dos',
-        execution: 'Saisis la barre paumes vers TOI. Ce mouvement cible beaucoup plus les biceps.',
-        substitute: { name: 'Curls Poids de Corps', target: 'Biceps', execution: 'Utilise une serviette ou un drap solide. Tente de ramener tes mains à ton visage.', cues: ['Garder les coudes fixes'] },
-        cues: ['Contracte fort les biceps en haut', 'Descends complètement'] },
-      { id: 'scap_pull',    name: 'Rétractions Scapulaires', sets: 3, intensityPct: 1.0, maxKey: 'maxPullups', fixedReps: 10, equipment: 'pullupBar',
-        target: 'Bas des Trapèzes, Posture',
-        execution: 'Suspendu à la barre (bras tendus), hausse les épaules pour te soulever légèrement SANS plier les coudes.',
-        substitute: { name: 'Shrugs Dorsaux au Sol', target: 'Trapèzes', execution: 'Allongé sur le ventre, bras en croix, soulève les bras en serrant les omoplates.', cues: ['Ne pas lever la tête'] },
-        cues: ['Garde les bras 100% tendus', 'Isole le mouvement des omoplates'] },
-      { id: 'dead_hang',    name: 'Suspension Active (Grip)', sets: 3, intensityPct: 1.0, maxKey: null, fixedReps: 30, isTime: true, equipment: 'pullupBar',
-        target: 'Avant-bras, Poigne (Grip)',
-        execution: 'Reste suspendu à la barre le plus longtemps possible, en gardant les épaules engagées.',
-        substitute: { name: 'Serrer les Poings (Fermier)', fixedReps: 30, isTime: true, target: 'Grip', execution: 'Serre très fort une balle de tennis ou un objet.', cues: ['Contracter à 100%'] },
-        cues: ['Respiration lente et profonde', 'Ne laisse pas tes épaules remonter aux oreilles'] },
-    ],
-  },
-  {
-    day: 2, label: 'Mer', type: 'Core 🧱',
-    exercises: [
-      { id: 'hollow',       name: 'Gainage Banane (Hollow Body)', sets: 4, intensityPct: 1.0, maxKey: null, fixedReps: 30, isTime: true, equipment: null,
-        target: 'Sangle abdominale (Gainage total)',
-        execution: 'Allongé sur le dos, décolle les épaules et les jambes tendues. Le bas du dos DOIT RESTER PLAQUÉ au sol.',
-        cues: ['Si le dos se creuse, remonte les jambes', 'Rentre le ventre'] },
-      { id: 'l_sit',        name: 'L-Sit (Équerre)', sets: 3, intensityPct: 1.0, maxKey: null, fixedReps: 15, isTime: true, equipment: 'parallettes',
-        target: 'Abdos profonds, Fléchisseurs de hanche',
-        execution: 'En appui sur les mains, soulève ton corps et tends les jambes à l\'horizontale (forme un L).',
-        substitute: { name: 'L-Sit sur Chaises (Genoux Pliés)', fixedReps: 10, isTime: true, target: 'Abdos', execution: 'Mains sur deux chaises, soulève-toi et monte les genoux à la poitrine.', cues: ['Garder les épaules basses'] },
-        cues: ['Bras tendus, pousse le sol', 'Garde les jambes serrées'] },
-      { id: 'ab_wheel',     name: 'Roue Abdominale (Ab Wheel)', sets: 3, intensityPct: 0.70, maxKey: 'maxPushups', equipment: 'abWheel',
-        target: 'Abdos profonds',
-        execution: 'À genoux, fais rouler la roue devant toi jusqu\'à l\'extension quasi complète, puis reviens.',
-        substitute: { name: 'Planche sur Coudes', fixedReps: 45, isTime: true, target: 'Abdos', execution: 'Classique. Gainage statique.', cues: ['Rétroversion du bassin'] },
-        cues: ['Ne JAMAIS creuser les lombaires', 'Contrôle le retour'] },
-      { id: 'leg_raises',   name: 'Élévations de Jambes', sets: 3, intensityPct: 0.75, maxKey: 'maxPushups', equipment: null,
-        target: 'Bas des Abdominaux',
-        execution: 'Allongé sur le dos, monte tes jambes tendues à 90°, puis redescends-les SANS toucher le sol.',
-        cues: ['Mouvement très lent', 'Garde le bas du dos plaqué'] },
-      { id: 'mt_climber',   name: 'Mountain Climbers (Explosif)', sets: 3, intensityPct: 1.0, maxKey: null, fixedReps: 20, equipment: null,
-        target: 'Abdos, Cardio',
-        execution: 'En position de pompe, ramène un genou vers la poitrine, puis l\'autre, de façon explosive.',
-        cues: ['Garde les hanches basses', 'Rythme rapide'] },
-    ],
-  },
-  {
-    day: 3, label: 'Jeu', type: 'Repos 🌿', isRest: true,
-    restNote: 'Récupération active. Marche 20-30 min, étirements, mobilité articulaire.',
-    exercises: [],
-  },
-  {
-    day: 4, label: 'Ven', type: 'Intensité ⚡',
-    exercises: [
-      { id: 'pullup_max',   name: 'Tractions Pures (Force)', sets: 5, intensityPct: 0.85, maxKey: 'maxPullups', equipment: 'pullupBar',
-        target: 'Dos, Biceps (Force maximale)',
-        execution: 'Séries courtes mais intenses. Pause de 2 minutes entre les séries.',
-        substitute: { name: 'Tirage Horizontal Surchargé', target: 'Dos', execution: 'Tirage classique mais avec un gilet ou un sac lourd.', cues: ['Explosif en montée'] },
-        cues: ['Qualité parfaite obligatoire', 'Explosif à la montée'] },
-      { id: 'ring_dip',     name: 'Dips sur Anneaux (Instable)', sets: 3, intensityPct: 0.65, maxKey: 'maxDips', equipment: 'rings',
-        target: 'Pectoraux, Triceps (Stabilisation)',
-        execution: 'Les anneaux forcent tout le corps à se gainer pour empêcher tes mains de s\'écarter.',
-        substitute: { name: 'Dips Lents (Excentrique)', target: 'Triceps', execution: 'Dips classiques mais avec une descente de 5 secondes.', cues: ['Lent à la descente', 'Explosif en montée'] },
-        cues: ['Tourne les anneaux vers l\'extérieur en haut', 'Garde-les proches du corps'] },
-      { id: 'pushup_max',   name: 'Pompes Pures (Force)', sets: 5, intensityPct: 0.85, maxKey: 'maxPushups', equipment: null,
-        target: 'Pectoraux, Triceps',
-        execution: 'Pompes avec une pause de 1 seconde en bas du mouvement.',
-        cues: ['Ne repose pas le corps au sol', 'Remonte de façon explosive'] },
-      { id: 'kb_swing',     name: 'Swings Kettlebell (Puissance)', sets: 4, intensityPct: 1.0, maxKey: null, fixedReps: 15, equipment: 'kettlebell',
-        target: 'Chaîne postérieure (Fessiers, Ischios)',
-        execution: 'Pousse le kettlebell avec tes hanches (mouvement de balancier), ce ne sont pas les bras qui lèvent le poids.',
-        substitute: { name: 'Extension Lombaire (Superman)', fixedReps: 30, isTime: true, target: 'Bas du dos', execution: 'Allongé sur le ventre, soulève bras et jambes.', cues: ['Contracter les fessiers'] },
-        cues: ['Mouvement de charnière (Hip Hinge)', 'Verrouille les abdos en haut'] },
-      { id: 'squat_jump',   name: 'Squats Sautés (Explosif)', sets: 3, intensityPct: 1.0, maxKey: null, fixedReps: 15, equipment: null,
-        target: 'Quadriceps (Puissance)',
-        execution: 'Fais un squat classique, et à la montée, saute le plus haut possible.',
-        cues: ['Amortit bien la réception', 'Enchaîne de façon fluide'] },
-    ],
-  },
-  {
-    day: 5, label: 'Sam', type: 'Volume 🏋️',
-    exercises: [
-      { id: 'vol_push',     name: 'Pompes Larges', sets: 4, intensityPct: 0.60, maxKey: 'maxPushups', equipment: null,
-        target: 'Extérieur des Pectoraux',
-        execution: 'Mains plus larges que les épaules. Le volume est haut, garde un rythme régulier.',
-        cues: ['Moins d\'amplitude sur les triceps', 'Focus sur les pecs'] },
-      { id: 'vol_pull',     name: 'Tractions Prise Neutre', sets: 4, intensityPct: 0.60, maxKey: 'maxPullups', equipment: 'pullupBar',
-        target: 'Dos et Biceps équilibrés',
-        execution: 'Paumes face à face (si la barre le permet). Excellente prise pour le volume.',
-        substitute: { name: 'Tirage Isométrique Serviette', target: 'Dos', execution: 'Tire fort sur une serviette bloquée. Maintiens la tension max.', cues: ['Contracter fort'] },
-        cues: ['Rythme constant', 'Ne va pas jusqu\'à l\'échec'] },
-      { id: 'vol_dip',      name: 'Dips Volume', sets: 4, intensityPct: 0.65, maxKey: 'maxDips', equipment: 'dipBars',
-        target: 'Triceps',
-        execution: 'Séries moyennes avec un temps de repos court (60s max).',
-        substitute: { name: 'Extensions Triceps au Mur', target: 'Triceps', execution: 'Mains au mur, descends la tête entre les mains en pliant les coudes.', cues: ['Gainage total'] },
-        cues: ['Mouvement fluide', 'Focus endurance musculaire'] },
-      { id: 'jump_rope',    name: 'Corde à Sauter (Cardio)', sets: 3, intensityPct: 1.0, maxKey: null, fixedReps: 60, isTime: true, equipment: 'jumpRope',
-        target: 'Cardio, Mollets',
-        execution: 'Sauts légers sur la pointe des pieds. Rythme soutenu pendant 60s.',
-        substitute: { name: 'Jumping Jacks', fixedReps: 60, isTime: true, target: 'Cardio', execution: 'Sauts en écartant bras et jambes.', cues: ['Garder le rythme'] },
-        cues: ['Tourne la corde avec les poignets', 'Ne saute pas trop haut'] },
-    ],
-  },
-  {
-    day: 6, label: 'Dim', type: 'Repos 🌙', isRest: true,
-    restNote: 'Repos complet. Prépare ta semaine. Dors au moins 8h. Hydrate-toi.',
-    exercises: [],
-  },
-]
+export function getProgram(profile) {
+  const activeIds = profile?.activeExercises || defaultActiveIds;
+  const activeLib = exerciseLibrary.filter(ex => activeIds.includes(ex.id));
 
-/** Calculate reps for an exercise */
+  const byCat = {
+    push: activeLib.filter(e => e.category === 'push'),
+    pull: activeLib.filter(e => e.category === 'pull'),
+    core: activeLib.filter(e => e.category === 'core'),
+    legs: activeLib.filter(e => e.category === 'legs'),
+    cardio: activeLib.filter(e => e.category === 'cardio'),
+  }
+
+  // Safely take 'limit' items starting from 'start' index, looping if necessary, without duplicates.
+  const safeSlice = (arr, start, limit) => {
+    if (!arr || arr.length === 0) return [];
+    const result = [];
+    for(let i=0; i<limit; i++) {
+       result.push(arr[(start + i) % arr.length]);
+    }
+    return [...new Set(result)]; // deduplicate
+  }
+
+  return [
+    {
+      day: 0, label: 'Lun', type: 'Push 💪',
+      exercises: safeSlice(byCat.push, 0, 5)
+    },
+    {
+      day: 1, label: 'Mar', type: 'Pull 🔥',
+      exercises: safeSlice(byCat.pull, 0, 5)
+    },
+    {
+      day: 2, label: 'Mer', type: 'Core & Legs 🧱',
+      exercises: [...safeSlice(byCat.core, 0, 3), ...safeSlice(byCat.legs, 0, 2)]
+    },
+    {
+      day: 3, label: 'Jeu', type: 'Repos 🌿', isRest: true,
+      restNote: 'Récupération active. Marche 20-30 min, étirements, mobilité articulaire.',
+      exercises: [],
+    },
+    {
+      day: 4, label: 'Ven', type: 'Intensité ⚡',
+      exercises: [...safeSlice(byCat.pull, 3, 2), ...safeSlice(byCat.push, 3, 2), ...safeSlice(byCat.legs, 2, 1)]
+    },
+    {
+      day: 5, label: 'Sam', type: 'Volume & Cardio 🏋️',
+      exercises: [...safeSlice(byCat.push, 1, 1), ...safeSlice(byCat.pull, 1, 1), ...safeSlice(byCat.cardio, 0, 3)]
+    },
+    {
+      day: 6, label: 'Dim', type: 'Repos 🌙', isRest: true,
+      restNote: 'Repos complet. Prépare ta semaine. Dors au moins 8h. Hydrate-toi.',
+      exercises: [],
+    },
+  ]
+}
+
 export function calcReps(exercise, profile) {
   if (exercise.fixedReps) return exercise.fixedReps
   if (!exercise.maxKey) return 10
