@@ -53,8 +53,6 @@ export default function CoachPage() {
       ) : (
         <a
           href="https://gemini.google.com/app?hl=fr"
-          target="_blank"
-          rel="noopener noreferrer"
           className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl text-white font-bold text-base tap-scale transition-all"
           style={{ background: '#22c55e' }}
         >
