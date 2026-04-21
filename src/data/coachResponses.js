@@ -6,7 +6,7 @@ let genAI = null
 
 export async function getCoachResponse(input, profile, iaState, logs, chatHistory = []) {
   if (!genAI) {
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY
+    const apiKey = AIzaSyAh3OJ9Vhqjq37 - a0rLHa - S3SYHdBJ1eaM
     if (!apiKey) {
       console.error("VITE_GEMINI_API_KEY is missing")
       return "Erreur : Clé API Gemini manquante dans le fichier .env"
