@@ -177,10 +177,23 @@ export function calcQty(baseQty, weight, calMultiplier) {
   return Math.round(baseQty * (weight / 63) * calMultiplier * 7 * 10) / 10
 }
 
-/** Return the active ingredient (original or chosen substitute) */
-export function resolveIngredient(item, groceryPrefs) {
-  const chosenId = groceryPrefs?.[item.id]
+/** Return the active ingredient (original or chosen substitute), respecting blacklist */
+export function resolveIngredient(item, groceryPrefs, blacklist = []) {
+  let chosenId = groceryPrefs?.[item.id]
+
+  // If chosen substitute is blacklisted, fallback
+  if (chosenId && blacklist.includes(chosenId)) {
+    chosenId = null
+  }
+
+  // If base item is blacklisted, auto-pick first valid substitute
+  if (!chosenId && blacklist.includes(item.id)) {
+    const firstValidSub = item.substitutes.find((s) => !blacklist.includes(s.id))
+    if (firstValidSub) chosenId = firstValidSub.id
+  }
+
   if (!chosenId) return item
+
   const sub = item.substitutes.find((s) => s.id === chosenId)
   return sub ? { ...item, ...sub } : item
 }

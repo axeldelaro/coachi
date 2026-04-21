@@ -125,7 +125,7 @@ export default function CoachPage() {
       </div>
 
       {/* Quick replies block (Dynamic based on context) */}
-      <div className="shrink-0 px-4 pb-6 pt-3 border-t border-white/5 bg-[#050505]">
+      <div className="shrink-0 px-4 pb-3 pt-3 border-t border-white/5 bg-[#050505]">
         <p className="text-[10px] uppercase tracking-widest text-white/30 font-semibold mb-3 text-center">Sélectionne une réponse</p>
         <div className="flex flex-wrap gap-2 justify-center">
           {QUICK_REPLIES.map((qr) => (
@@ -141,6 +141,28 @@ export default function CoachPage() {
           ))}
         </div>
       </div>
+
+      {/* Input form */}
+      <form onSubmit={handleSubmit} className="shrink-0 px-4 pb-6 bg-[#050505]">
+        <div className="relative flex items-center">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Écris à ton coach..."
+            className="w-full bg-white/5 border border-white/10 rounded-2xl py-3 pl-4 pr-12 text-sm text-white placeholder-white/30 focus:outline-none focus:border-white/20 transition-colors"
+            disabled={typing}
+          />
+          <button
+            type="submit"
+            disabled={!input.trim() || typing}
+            className="absolute right-2 w-8 h-8 rounded-xl bg-white/10 flex items-center justify-center text-white disabled:opacity-30 tap-scale transition-all"
+            style={input.trim() && !typing ? { background: 'var(--accent)' } : {}}
+          >
+            <Send size={14} />
+          </button>
+        </div>
+      </form>
 
       <style>{`
         @keyframes typingDot {
