@@ -102,7 +102,7 @@ export default function WorkoutPage() {
         />
       )}
 
-      <div className="px-4 py-3 pb-24 flex flex-col gap-3">
+      <div className="px-4 py-3 pb-2 flex flex-col gap-3">
         
         {/* Header Tabs */}
         <div className="flex gap-1 fade-up bg-white/5 p-1 rounded-lg">
