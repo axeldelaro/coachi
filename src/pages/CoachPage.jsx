@@ -51,15 +51,22 @@ export default function CoachPage() {
           Générer & Copier mes données
         </button>
       ) : (
-        <a
-          href="https://gemini.google.com/app?hl=fr"
-          className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl text-white font-bold text-base tap-scale transition-all"
-          style={{ background: '#22c55e' }}
-        >
-          <Check size={20} />
-          Copié ! Ouvrir Gemini
-          <ExternalLink size={16} className="text-white/50" />
-        </a>
+        <div className="w-full flex flex-col gap-3 fade-up">
+          <a
+            href="https://gemini.google.com/app?hl=fr"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center justify-center gap-3 py-4 rounded-2xl text-white font-bold text-base tap-scale transition-all"
+            style={{ background: '#22c55e' }}
+          >
+            <Check size={20} />
+            Copié ! Ouvrir Gemini
+            <ExternalLink size={16} className="text-white/50" />
+          </a>
+          <p className="text-[10px] text-yellow-400/80 leading-relaxed px-2">
+            ⚠️ Si un écran blanc ou de chargement infini apparaît, touchez l'icône 🧭 (boussole) en bas à droite pour forcer l'ouverture dans Safari. C'est une sécurité d'Apple.
+          </p>
+        </div>
       )}
 
       <div className="glass px-4 py-4 rounded-2xl border border-white/5 mt-4 text-left w-full">
