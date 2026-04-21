@@ -172,7 +172,7 @@ STYLE : Direct, motivant, tutoiement OBLIGATOIRE. Réponses courtes. Réponds à
 
   try {
     const model = ai.getGenerativeModel({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-2.5-flash-lite',
       systemInstruction: { parts: [{ text: systemText }] },
       tools: COACH_TOOLS,
     })
