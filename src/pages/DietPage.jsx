@@ -126,7 +126,7 @@ export default function DietPage() {
   const { profile, iaState, groceryPrefs } = data
 
   return (
-    <div className="px-4 py-5 pb-28 flex flex-col gap-3">
+    <div className="px-4 py-3 pb-2 flex flex-col gap-3">
       {/* Header */}
       <div className="flex items-start justify-between fade-up">
         <div>

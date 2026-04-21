@@ -58,7 +58,7 @@ export default function GroceryPage() {
   }
 
   return (
-    <div className="px-4 py-5 pb-28 flex flex-col gap-4">
+    <div className="px-4 py-3 pb-2 flex flex-col gap-4">
       <div className="fade-up flex items-start justify-between">
         <div>
           <h2 className="text-xl font-black text-white">Liste de Courses</h2>

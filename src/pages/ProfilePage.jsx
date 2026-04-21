@@ -132,7 +132,7 @@ export default function ProfilePage() {
   if (!profile) return null
 
   return (
-    <div className="px-4 py-5 pb-28 flex flex-col gap-3">
+    <div className="px-4 py-3 pb-2 flex flex-col gap-3">
       <div className="fade-up">
         <h2 className="text-xl font-black text-white">Profil</h2>
         <p className="text-xs text-white/30 mt-0.5">Appuie sur une section pour la modifier</p>
