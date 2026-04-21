@@ -104,12 +104,13 @@ function TypingIndicator() {
 
 export default function CoachPage() {
   const { data }                                          = useOutletContext()
-  const { updateProfile, updateIaState, updateLogs, updateChatHistory } = useUserDoc()
+  const { updateProfile, updateIaState, updateLogs, updateChatHistory, updateGroceryPrefs } = useUserDoc()
 
-  const profile = data?.profile
-  const iaState = data?.iaState
-  const logs    = data?.logs
-  const name    = profile?.name || 'champion'
+  const profile      = data?.profile
+  const iaState      = data?.iaState
+  const logs         = data?.logs
+  const groceryPrefs = data?.groceryPrefs ?? {}
+  const name         = profile?.name || 'champion'
 
   // Welcome message shown only when no history yet
   const WELCOME = {
@@ -166,6 +167,16 @@ export default function CoachPage() {
       case 'update_water_intake':
         await updateLogs({ ...logs, water: Math.max(0, args.glasses) })
         break
+      case 'update_grocery_substitute': {
+        const next = { ...groceryPrefs }
+        if (!args.substituteId || args.substituteId === 'original') {
+          delete next[args.itemId]
+        } else {
+          next[args.itemId] = args.substituteId
+        }
+        await updateGroceryPrefs(next)
+        break
+      }
       default:
         console.warn('Unknown action:', name)
     }
@@ -194,7 +205,7 @@ export default function CoachPage() {
     const geminiHistory = messages.filter(m => m.role === 'user' || m.role === 'coach')
 
     const { text: replyText, actions } = await getCoachResponse(
-      text.trim(), profile, iaState, logs, geminiHistory,
+      text.trim(), profile, iaState, logs, geminiHistory, groceryPrefs,
     )
 
     setTyping(false)
