@@ -12,7 +12,7 @@ export default function WorkoutPage() {
   const [selectedDay, setSelectedDay] = useState(new Date().getDay() === 0 ? 6 : new Date().getDay() - 1)
   const [sessionActive, setSessionActive] = useState(false)
   const [selectedExercise, setSelectedExercise] = useState(null)
-  const [expandedCats, setExpandedCats] = useState(['push', 'pull', 'core', 'legs', 'cardio'])
+  const [expandedCat, setExpandedCat] = useState(null)
 
   if (!data) return null
 
@@ -77,9 +77,7 @@ export default function WorkoutPage() {
   }
 
   const toggleCat = (id) => {
-    setExpandedCats(prev => 
-      prev.includes(id) ? prev.filter(c => c !== id) : [...prev, id]
-    )
+    setExpandedCat(prev => prev === id ? null : id)
   }
 
   const categories = [
@@ -264,7 +262,7 @@ export default function WorkoutPage() {
               {categories.map(cat => {
                 const catEx = exerciseLibrary.filter(e => e.category === cat.id)
                 if (catEx.length === 0) return null
-                const isExpanded = expandedCats.includes(cat.id)
+                const isExpanded = expandedCat === cat.id
                 
                 return (
                   <div key={cat.id} className="glass rounded-xl overflow-hidden">
