@@ -12,20 +12,25 @@ const MODEL_CHAIN = [
   'gemini-1.5-flash',       // Ultimate fallback
 ]
 
-// Errors that should trigger a model switch (rate limit / quota / unavailable)
+// Errors that should trigger a model switch
 const isRetryableError = (err) => {
   const msg = err?.message?.toLowerCase() ?? ''
   const status = err?.status ?? err?.code ?? 0
   return (
     status === 429 ||
     status === 503 ||
+    status === 403 || // Accès refusé (ex: modèle pro sur tier gratuit)
+    status === 400 || // Bad request (parfois utilisé pour des modèles non dispo)
     msg.includes('429') ||
+    msg.includes('403') ||
     msg.includes('quota') ||
     msg.includes('rate') ||
     msg.includes('resource_exhausted') ||
     msg.includes('overloaded') ||
     msg.includes('unavailable') ||
-    msg.includes('model') && msg.includes('not found')
+    msg.includes('forbidden') ||
+    msg.includes('not found') ||
+    msg.includes('model')
   )
 }
 // ── Lazy init ────────────────────────────────────────────────────────────────
